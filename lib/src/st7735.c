@@ -870,3 +870,31 @@ int16_t ST7735_GetWidth(void)
 {
 	return _width;
 }
+
+void convert_image_frame_to_rgb565(const uint32_t *image_frame, uint8_t *rgb565_buffer, int width, int height) {
+  int total_bits = width * height;
+  int pixel_index = 0;
+
+  for (int bit_index = 0; bit_index < total_bits; ++bit_index) {
+      int word_index = bit_index / 32;
+      int bit_offset = 31 - (bit_index % 32);
+      uint32_t word = image_frame[word_index];
+      int bit = (word >> bit_offset) & 1;
+
+      // Generate RGB565 pixel
+      uint16_t pixel;
+      if (bit) {
+          // Black pixel
+          pixel = 0x0000;  // RGB565 black
+      } else {
+          // White pixel
+          pixel = 0xFFFF;  // RGB565 white
+      }
+
+      // Store pixel in rgb565_buffer (big-endian format)
+      rgb565_buffer[pixel_index * 2]     = (pixel >> 8) & 0xFF;
+      rgb565_buffer[pixel_index * 2 + 1] = pixel & 0xFF;
+
+      pixel_index++;
+  }
+}

@@ -154,6 +154,6 @@ void ST7735_SetRotation(uint8_t m);
 uint8_t ST7735_GetRotation(void);
 int16_t ST7735_GetHeight(void);
 int16_t ST7735_GetWidth(void);
-
+void convert_image_frame_to_rgb565(const uint32_t *image_frame, uint8_t *rgb565_buffer, int width, int height);
 
 #endif // __ST7735_H__
