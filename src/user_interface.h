@@ -29,8 +29,8 @@ void init_display(void);
 /**
  * @brief Display and update the main timer view on the screen.
  * 
- * @param is_button_clicked Boolean flag indicating if a button was clicked
- * @param is_timer_paused Boolean flag indicating whether the timer is paused
+ * @param is_button_clicked Boolean flag indicating if the start/pause/resume button was clicked
+ * @param is_timer_paused Boolean flag indicating whether the button start/pause/resume was clicked to pause the timer
  * @param timer_state Current state of the timer (e.g., "WORK", "REST")
  * @param current_minutes Current minutes of the timer
  * @param current_seconds Current seconds of the timer
@@ -40,7 +40,7 @@ void init_display(void);
  * @param total_sessions Total number of sessions
  * @param progress_percentage Progress percentage of the current session (0-100)
  */
-void home_timer_view(bool is_button_clicked, bool is_timer_paused, char* timer_state, 
+void home_view(bool is_button_clicked, bool is_timer_paused, char* timer_state, 
                      int current_minutes, int current_seconds, 
                      int *previous_minutes, int *previous_seconds, 
                      int current_session, int total_sessions, int progress_percentage);
