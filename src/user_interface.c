@@ -23,7 +23,7 @@ void init_display() {
 
 /*########################### Home Interface ###########################*/
 
-void home_timer_view(bool is_button_clicked, bool is_timer_paused, char* timer_state, 
+void home_view(bool is_button_clicked, bool is_timer_paused, char* timer_state, 
                      int current_minutes, int current_seconds, 
                      int *previous_minutes, int *previous_seconds, 
                      int current_session, int total_sessions, int progress_percentage) {
@@ -59,7 +59,7 @@ void draw_initial_view(char* timer_state, int current_session, int total_session
     ST7735_DrawString(3, BUTTONS_Y, session_indicator, Font_7x10, ST7735_WHITE, ST7735_BLACK);
 
     // Draw menu label
-    ST7735_DrawString(95, BUTTONS_Y, "MENU", Font_7x10, ST7735_WHITE, ST7735_BLACK);
+    ST7735_DrawString(95, BUTTONS_Y, "CONF", Font_7x10, ST7735_WHITE, ST7735_BLACK);
 
     // Initially, draw "START" at the beginning
     ST7735_DrawString(47, BUTTONS_Y, "START", Font_7x10, ST7735_WHITE, ST7735_BLACK);
@@ -115,4 +115,11 @@ void update_progress_bar(int completion_percentage) {
 
     // Fill the progress bar
     ST7735_FillRectangle(PROGRESS_BAR_X, PROGRESS_BAR_Y, filled_width, PROGRESS_BAR_HEIGHT, ST7735_WHITE);
+}
+
+/*########################### Settings Interface ###########################*/
+
+void settings_view(){
+
+
 }

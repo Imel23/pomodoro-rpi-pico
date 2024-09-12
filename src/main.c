@@ -3,6 +3,7 @@
 
 #define BUTTON_PIN 16
 
+
 void init_gpio() {
     gpio_init(BUTTON_PIN);
     gpio_set_dir(BUTTON_PIN, GPIO_IN);
@@ -39,6 +40,7 @@ void update_timer(int *minutes, int *seconds, bool *timer_running) {
     }
 }
 
+
 int main()
 {
     stdio_init_all();
@@ -60,7 +62,7 @@ int main()
     uint64_t last_timer_tick = 0;
     const uint64_t timer_interval = 1000;
 
-    home_timer_view(button_clicked_once, pause_clicked, "WORK", minutes, seconds, &old_minutes, &old_seconds, 1, 4, (int)((5 - minutes) * 100 / 5));
+    home_view(button_clicked_once, pause_clicked, "WORK", minutes, seconds, &old_minutes, &old_seconds, 1, 4, (int)((5 - minutes) * 100 / 5));
 
     while (true) {
         uint64_t current_time = to_ms_since_boot(get_absolute_time());
@@ -79,10 +81,10 @@ int main()
             update_timer(&minutes, &seconds, &timer_running);
 
         }
-		home_timer_view(button_clicked_once, pause_clicked, "WORK", minutes, seconds, &old_minutes, &old_seconds, 1, 4, (int)((5 - minutes) * 100 / 5));
+		home_view(button_clicked_once, pause_clicked, "WORK", minutes, seconds, &old_minutes, &old_seconds, 1, 4, (int)((5 - minutes) * 100 / 5));
 
         sleep_ms(10);
     }
-
+    
     return 0;
 }
