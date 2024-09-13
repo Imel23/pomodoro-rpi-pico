@@ -1,20 +1,19 @@
 #include <stdio.h>
 #include "pico/stdlib.h"
 #include "user_interface.h"
-
-#define BUTTON_PIN 16
+#include "main.h"
 
 void init_gpio()
 {
-    gpio_init(BUTTON_PIN);
-    gpio_set_dir(BUTTON_PIN, GPIO_IN);
-    gpio_pull_up(BUTTON_PIN);
+    gpio_init(BUTTON1);
+    gpio_set_dir(BUTTON1, GPIO_IN);
+    gpio_pull_up(BUTTON1);
 }
 
 bool check_button_press(bool *button_was_pressed, uint64_t *last_debounce_time, const uint64_t debounce_delay)
 {
     uint64_t current_time = to_ms_since_boot(get_absolute_time());
-    bool button_state = gpio_get(BUTTON_PIN);
+    bool button_state = gpio_get(BUTTON1);
 
     if (button_state == 0 && !(*button_was_pressed) && (current_time - *last_debounce_time) > debounce_delay)
     {
