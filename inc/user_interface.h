@@ -6,7 +6,6 @@
 #include <stdbool.h>
 #include "hardware/gpio.h"
 #include "hardware/spi.h"
-#include "wiring.h"
 #include "st7735.h"
 #include "fonts.h"
 
@@ -28,7 +27,7 @@ void init_display(void);
 
 /**
  * @brief Display and update the main timer view on the screen.
- * 
+ *
  * @param is_button_clicked Boolean flag indicating if the start/pause/resume button was clicked
  * @param is_timer_paused Boolean flag indicating whether the button start/pause/resume was clicked to pause the timer
  * @param timer_state Current state of the timer (e.g., "WORK", "REST")
@@ -40,30 +39,30 @@ void init_display(void);
  * @param total_sessions Total number of sessions
  * @param progress_percentage Progress percentage of the current session (0-100)
  */
-void home_view(bool is_button_clicked, bool is_timer_paused, char* timer_state, 
-                     int current_minutes, int current_seconds, 
-                     int *previous_minutes, int *previous_seconds, 
-                     int current_session, int total_sessions, int progress_percentage);
+void home_view(bool is_button_clicked, bool is_timer_paused, char *timer_state,
+               int current_minutes, int current_seconds,
+               int *previous_minutes, int *previous_seconds,
+               int current_session, int total_sessions, int progress_percentage);
 
 /**
  * @brief Draw the initial view of the timer interface.
- * 
+ *
  * @param timer_state Current state of the timer (e.g., "WORK", "REST")
  * @param current_session Current session number
  * @param total_sessions Total number of sessions
  */
-void draw_initial_view(char* timer_state, int current_session, int total_sessions);
+void draw_initial_view(char *timer_state, int current_session, int total_sessions);
 
 /**
  * @brief Update the pause/resume button display on the screen.
- * 
+ *
  * @param is_timer_paused Boolean flag indicating whether the timer is paused
  */
 void update_pause_resume_display(bool is_timer_paused);
 
 /**
  * @brief Update the time display on the screen.
- * 
+ *
  * @param previous_minutes Previous minutes
  * @param previous_seconds Previous seconds
  * @param current_minutes New minutes to display
@@ -73,7 +72,7 @@ void update_time_display(int previous_minutes, int previous_seconds, int current
 
 /**
  * @brief Update the progress bar on the screen.
- * 
+ *
  * @param completion_percentage Progress percentage (0-100)
  */
 void update_progress_bar(int completion_percentage);

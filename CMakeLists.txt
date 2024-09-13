@@ -30,5 +30,6 @@ pico_add_extra_outputs(Pomodoro)
 
 #7. add target libraries
 target_link_libraries(Pomodoro displayLib)
+target_include_directories(Pomodoro PUBLIC inc/)
 
 add_subdirectory(lib)
