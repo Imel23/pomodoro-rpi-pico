@@ -1,6 +1,7 @@
 add_library(displayLib STATIC
     src/fonts.c
     src/st7735.c
+    src/timer_.c
 )
 
 #add target libraries
