@@ -17,8 +17,8 @@
 #define LCD_CS 17
 #define LCD_SCK 18
 #define LCD_MOSI 19
-#define LCD_RST 21
-#define LCD_DC 20
+#define LCD_RST 22
+#define LCD_DC 16
 
 #define ST7735_SPI_PORT spi0 // spi0, spi1
 // #define USE_SPI_DMA			//if used DMA for SPI bus
