@@ -20,6 +20,7 @@ pico_sdk_init()
 add_executable(Pomodoro
     src/main.c
     src/user_interface.c
+    src/buttons_handler.c
 )
 
 pico_enable_stdio_usb(Pomodoro 1)
