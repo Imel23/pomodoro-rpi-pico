@@ -4,4 +4,6 @@ This project implements a Pomodoro timer using the Raspberry Pi Pico microcontro
 
 # Requirement
 
-sudp apt install cmake gcc-arm-none-eabi build-essential
+```
+sudo apt install cmake gcc-arm-none-eabi build-essential
+```
