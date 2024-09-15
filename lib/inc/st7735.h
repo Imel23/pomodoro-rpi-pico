@@ -156,6 +156,7 @@ void ST7735_FillRoundRect(int16_t x, int16_t y, int16_t w, int16_t h, int16_t r,
 void ST7735_DrawTriangle(int16_t x0, int16_t y0, int16_t x1, int16_t y1, int16_t x2, int16_t y2, uint16_t color);
 void ST7735_FillTriangle(int16_t x0, int16_t y0, int16_t x1, int16_t y1, int16_t x2, int16_t y2, uint16_t color);
 void ST7735_DrawLine(int16_t x0, int16_t y0, int16_t x1, int16_t y1, uint16_t color);
+void ST7735_DrawLineThick(int16_t x0, int16_t y0, int16_t x1, int16_t y1, uint16_t color, uint16_t thickness);
 void ST7735_DrawFastVLine(int16_t x, int16_t y, int16_t h, uint16_t color);
 void ST7735_DrawFastHLine(int16_t x, int16_t y, int16_t w, uint16_t color);
 void ST7735_SetRotation(uint8_t m);
