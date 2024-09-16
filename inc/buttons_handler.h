@@ -3,10 +3,13 @@
 
 #include "pico/stdlib.h"
 
-#define START_PAUSE_BUTTON 26
-#define INCREA_BUTTON 21
-#define DECREA_BUTTON 20
-#define SETT_BUTTON 19
+#define START_PAUSE_BUTTON 0
+#define INCREA_BUTTON 3
+#define DECREA_BUTTON 6
+#define SETT_BUTTON 9
+
+#define debounce_delay 300
+extern uint64_t last_debounce_time;
 
 extern volatile bool is_start_pause_pressed;
 extern volatile bool is_settings_pressed;
