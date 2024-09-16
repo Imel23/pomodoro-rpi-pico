@@ -38,9 +38,6 @@ int main()
     bool timer_running = false;
     bool pause_clicked = false;
     bool button_clicked_once = false;
-    bool button_was_pressed = false;
-    uint64_t last_debounce_time = 0;
-    const uint64_t debounce_delay = 300;
 
     uint64_t last_timer_tick = 0;
     const uint64_t timer_interval = 1000;
@@ -51,7 +48,7 @@ int main()
     {
         uint64_t current_time = to_ms_since_boot(get_absolute_time());
 
-        if (check_button_press(START_PAUSE_BUTTON, &button_was_pressed, &last_debounce_time, debounce_delay))
+        if (check_button_press(START_PAUSE_BUTTON))
         {
             if (button_clicked_once)
             {

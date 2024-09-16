@@ -10,6 +10,8 @@
 
 void init_buttons();
 
-bool check_button_press(uint8_t button, bool *button_was_pressed, uint64_t *last_debounce_time, const uint64_t debounce_delay);
+int get_button_index(uint8_t button);
+
+bool check_button_press(uint8_t button);
 
 #endif // BUTTONS_HANDLER_H
