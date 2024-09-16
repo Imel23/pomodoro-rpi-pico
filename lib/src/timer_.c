@@ -15,11 +15,12 @@
 // Simplest form of getting 64 bit time from the timer.
 // It isn't safe when called from 2 cores because of the latching
 // so isn't implemented this way in the sdk
-static uint64_t get_time(void) {
+static uint64_t get_time(void)
+{
     // Reading low latches the high value
     uint32_t lo = timer_hw->timelr;
     uint32_t hi = timer_hw->timehr;
-    return ((uint64_t) hi << 32u) | lo;
+    return ((uint64_t)hi << 32u) | lo;
 }
 /// \end::get_time[]
 
@@ -28,7 +29,10 @@ static uint64_t get_time(void) {
 #define ALARM_NUM 0
 #define ALARM_IRQ timer_hardware_alarm_get_irq_num(timer_hw, ALARM_NUM)
 
-static void alarm_irq(void) {
+volatile bool alarm_fired;
+
+static void alarm_irq(void)
+{
     // Clear the alarm irq
     hw_clear_bits(&timer_hw->intr, 1u << ALARM_NUM);
 
@@ -37,7 +41,8 @@ static void alarm_irq(void) {
     alarm_fired = true;
 }
 
-void alarm_in_us(uint32_t delay_us) {
+void alarm_in_us(uint32_t delay_us)
+{
     // Enable the interrupt for our alarm (the timer outputs 4 alarm irqs)
     hw_set_bits(&timer_hw->inte, 1u << ALARM_NUM);
     // Set irq handler for alarm irq
@@ -53,7 +58,7 @@ void alarm_in_us(uint32_t delay_us) {
 
     // Write the lower 32 bits of the target time to the alarm which
     // will arm it
-    timer_hw->alarm[ALARM_NUM] = (uint32_t) target;
+    timer_hw->alarm[ALARM_NUM] = (uint32_t)target;
 }
 
 /// \end::alarm_standalone[]

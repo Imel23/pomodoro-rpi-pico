@@ -3,46 +3,25 @@
 #include "user_interface.h"
 #include "main.h"
 #include "buttons_handler.h"
+#include "time_handler.h"
 
-void update_timer(int *minutes, int *seconds, bool *timer_running)
-{
-    if (*seconds == 0)
-    {
-        if (*minutes > 0)
-        {
-            *seconds = 59;
-            --(*minutes);
-        }
-        else
-        {
-            *timer_running = false;
-        }
-    }
-    else
-    {
-        --(*seconds);
-    }
-}
+time_s time = {5, 2, 0, 0};
 
 int main()
 {
-    stdio_init_all();
-    init_display();
-    init_buttons();
+    __init();
 
-    int minutes = 5;
-    int seconds = 59;
-    int old_minutes = -1;
-    int old_seconds = -1;
+    ST7735_SetRotation(rot);
 
-    bool timer_running = false;
     bool pause_clicked = false;
-    bool button_clicked_once = false;
 
     uint64_t last_timer_tick = 0;
     const uint64_t timer_interval = 1000;
 
-    home_view(button_clicked_once, pause_clicked, "WORK", minutes, seconds, &old_minutes, &old_seconds, 1, 4, (int)((5 - minutes) * 100 / 5));
+    time.currentSecond = 0;
+    time.currentMinute = time.workDuration;
+
+    draw_initial_view("WORK", time.workDuration, 1, 4);
 
     while (true)
     {
@@ -50,26 +29,30 @@ int main()
 
         if (is_start_pause_pressed)
         {
-            printf("start pause button was pressed!\n");
-            is_start_pause_pressed = false;
-            if (button_clicked_once)
-            {
-                pause_clicked = !pause_clicked;
-            }
-            timer_running = !timer_running;
-            button_clicked_once = true;
+            update_pause_resume_display(pause_clicked);
+
+            pause_clicked = !pause_clicked;
         }
 
-        if (timer_running && (current_time - last_timer_tick) >= timer_interval)
+        if (pause_clicked && (current_time - last_timer_tick) >= timer_interval)
         {
             last_timer_tick = current_time;
 
-            update_timer(&minutes, &seconds, &timer_running);
+            // update_timer(&minutes, &seconds, &timer_running);
+            printf("alarm !! \n");
+
+            update_time(&time);
         }
-        home_view(button_clicked_once, pause_clicked, "WORK", minutes, seconds, &old_minutes, &old_seconds, 1, 4, (int)((5 - minutes) * 100 / 5));
 
         sleep_ms(10);
     }
 
     return 0;
+}
+
+void __init()
+{
+    stdio_init_all();
+    init_display();
+    init_buttons();
 }
