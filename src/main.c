@@ -48,8 +48,10 @@ int main()
     {
         uint64_t current_time = to_ms_since_boot(get_absolute_time());
 
-        if (check_button_press(START_PAUSE_BUTTON))
+        if (is_start_pause_pressed)
         {
+            printf("start pause button was pressed!\n");
+            is_start_pause_pressed = false;
             if (button_clicked_once)
             {
                 pause_clicked = !pause_clicked;

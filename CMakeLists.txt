@@ -30,7 +30,7 @@ pico_enable_stdio_uart(Pomodoro 0)
 pico_add_extra_outputs(Pomodoro)
 
 #7. add target libraries
-target_link_libraries(Pomodoro displayLib)
+target_link_libraries(Pomodoro displayLib hardware_irq)
 target_include_directories(Pomodoro PUBLIC inc/)
 
 add_subdirectory(lib)

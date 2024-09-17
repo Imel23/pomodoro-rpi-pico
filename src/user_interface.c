@@ -157,6 +157,7 @@ void settings_view()
         ST7735_DrawString(12, 136, "Long Break", Font_7x10, ST7735_WHITE, ST7735_BLACK);
         is_initial_state_drawn = true; // Mark initial state as drawn
     }
+    handle_menu_navigation();
 }
 
 void handle_menu_navigation()
@@ -164,8 +165,9 @@ void handle_menu_navigation()
     static int previous_selection_index = 0; // Keep track of the previous selection
 
     // Check for button presses
-    if (check_button_press(INCREA_BUTTON))
+    if (is_increase_pressed)
     {
+        is_increase_pressed = false;
         previous_selection_index = current_selection_index;
         // Move to the previous menu item
         if (current_selection_index == 0)
@@ -177,8 +179,9 @@ void handle_menu_navigation()
             current_selection_index--;
         }
     }
-    else if (check_button_press(DECREA_BUTTON))
+    else if (is_decrease_pressed)
     {
+        is_decrease_pressed = false;
         previous_selection_index = current_selection_index;
         // Move to the next menu item
         current_selection_index = (current_selection_index + 1) % MENU_ITEM_COUNT;
@@ -188,7 +191,7 @@ void handle_menu_navigation()
         // No button press; previous and current selection remain the same
         previous_selection_index = current_selection_index;
     }
-
+    printf("current selction index: %d\n", current_selection_index);
     // Update the selection arrow
     selection_arrow(menu_items_array[previous_selection_index], menu_items_array[current_selection_index]);
 }
