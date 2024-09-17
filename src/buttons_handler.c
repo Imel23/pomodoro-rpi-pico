@@ -1,5 +1,5 @@
 #include "buttons_handler.h"
-
+#include <stdio.h>
 #define DEBOUNCE_DELAY 50 // Debounce delay in milliseconds
 
 // Array of your button GPIO pins
@@ -11,66 +11,48 @@ const uint8_t button_pins[] = {
 
 #define NUM_BUTTONS 4
 
+volatile bool is_start_pause_pressed = false;
+volatile bool is_settings_pressed = false;
+volatile bool is_increase_pressed = false;
+volatile bool is_decrease_pressed = false;
+
 void init_buttons()
 {
-    gpio_init(START_PAUSE_BUTTON);
-    gpio_set_dir(START_PAUSE_BUTTON, GPIO_IN);
-    gpio_pull_up(START_PAUSE_BUTTON);
+    uint32_t event_mask = GPIO_IRQ_EDGE_FALL;
 
-    gpio_init(INCREA_BUTTON);
-    gpio_set_dir(INCREA_BUTTON, GPIO_IN);
-    gpio_pull_up(INCREA_BUTTON);
+    // Initialize buttons
+    uint8_t buttons[] = {START_PAUSE_BUTTON, INCREA_BUTTON, DECREA_BUTTON, SETT_BUTTON};
+    for (int i = 0; i < 4; i++)
+    {
+        gpio_init(buttons[i]);
+        gpio_set_dir(buttons[i], GPIO_IN);
+        gpio_pull_up(buttons[i]);
+    }
 
-    gpio_init(DECREA_BUTTON);
-    gpio_set_dir(DECREA_BUTTON, GPIO_IN);
-    gpio_pull_up(DECREA_BUTTON);
-
-    gpio_init(SETT_BUTTON);
-    gpio_set_dir(SETT_BUTTON, GPIO_IN);
-    gpio_pull_up(SETT_BUTTON);
+    // Register the global IRQ handler and enable interrupts for all buttons
+    gpio_set_irq_enabled_with_callback(START_PAUSE_BUTTON, event_mask, true, &buttons_callback);
+    for (int i = 1; i < 4; i++)
+    {
+        gpio_set_irq_enabled(buttons[i], event_mask, true);
+    }
 }
 
-// Function to map a button GPIO pin to an index
-int get_button_index(uint8_t button)
+void buttons_callback(uint gpio, uint32_t events)
 {
-    for (int i = 0; i < NUM_BUTTONS; i++)
+    if (gpio == START_PAUSE_BUTTON)
     {
-        if (button_pins[i] == button)
-        {
-            return i;
-        }
+        is_start_pause_pressed = true;
     }
-    // Return -1 if button not found
-    return -1;
-}
-
-bool check_button_press(uint8_t button)
-{
-    static bool button_was_pressed[NUM_BUTTONS] = {false};
-    static uint64_t last_debounce_time[NUM_BUTTONS] = {0};
-
-    int index = get_button_index(button);
-    if (index == -1)
+    else if (gpio == INCREA_BUTTON)
     {
-        // Handle error: button not recognized
-        return false;
+        is_increase_pressed = true;
     }
-
-    uint64_t current_time = to_ms_since_boot(get_absolute_time());
-    bool button_state = gpio_get(button);
-
-    if (button_state == 0 && !button_was_pressed[index] &&
-        (current_time - last_debounce_time[index]) > DEBOUNCE_DELAY)
+    else if (gpio == DECREA_BUTTON)
     {
-        button_was_pressed[index] = true;
-        last_debounce_time[index] = current_time;
-        return true;
+        is_decrease_pressed = true;
     }
-
-    if (button_state == 1)
+    else if (gpio == SETT_BUTTON)
     {
-        button_was_pressed[index] = false;
+        is_settings_pressed = true;
     }
-
-    return false;
 }

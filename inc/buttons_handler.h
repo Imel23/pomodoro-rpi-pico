@@ -8,10 +8,13 @@
 #define DECREA_BUTTON 20
 #define SETT_BUTTON 19
 
+extern volatile bool is_start_pause_pressed;
+extern volatile bool is_settings_pressed;
+extern volatile bool is_increase_pressed;
+extern volatile bool is_decrease_pressed;
+
 void init_buttons();
 
-int get_button_index(uint8_t button);
-
-bool check_button_press(uint8_t button);
+void buttons_callback(uint gpio, uint32_t events);
 
 #endif // BUTTONS_HANDLER_H
