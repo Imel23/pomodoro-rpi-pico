@@ -135,6 +135,76 @@ void update_progress_bar(int completion_percentage)
 
 /*########################### Settings Interface ###########################*/
 
+// Array defining the menu order
+menu_items menu_items_array[] = {sessions, work_duration, short_duration, long_break};
+#define MENU_ITEM_COUNT (sizeof(menu_items_array) / sizeof(menu_items_array[0]))
+volatile int current_selection_index = 0;
+
+// Function to display the settings view
 void settings_view()
 {
+    static bool is_initial_state_drawn = false;
+
+    if (!is_initial_state_drawn)
+    {
+        // Draw static elements
+        ST7735_FillScreen(ST7735_BLACK);
+        ST7735_DrawString(7, 16, "Settings", Font_11x18, ST7735_WHITE, ST7735_BLACK);
+        ST7735_DrawLineThick(6, 35, 117, 35, ST7735_WHITE, 2);
+        ST7735_DrawString(12, 46, "Sessions", Font_7x10, ST7735_WHITE, ST7735_BLACK);
+        ST7735_DrawString(12, 76, "Work Duration", Font_7x10, ST7735_WHITE, ST7735_BLACK);
+        ST7735_DrawString(12, 106, "Short Break", Font_7x10, ST7735_WHITE, ST7735_BLACK);
+        ST7735_DrawString(12, 136, "Long Break", Font_7x10, ST7735_WHITE, ST7735_BLACK);
+        is_initial_state_drawn = true; // Mark initial state as drawn
+    }
+}
+
+void handle_menu_navigation()
+{
+    static int previous_selection_index = 0; // Keep track of the previous selection
+
+    // Check for button presses
+    if (check_button_press(INCREA_BUTTON))
+    {
+        previous_selection_index = current_selection_index;
+        // Move to the previous menu item
+        if (current_selection_index == 0)
+        {
+            current_selection_index = MENU_ITEM_COUNT - 1; // Wrap around to the last item
+        }
+        else
+        {
+            current_selection_index--;
+        }
+    }
+    else if (check_button_press(DECREA_BUTTON))
+    {
+        previous_selection_index = current_selection_index;
+        // Move to the next menu item
+        current_selection_index = (current_selection_index + 1) % MENU_ITEM_COUNT;
+    }
+    else
+    {
+        // No button press; previous and current selection remain the same
+        previous_selection_index = current_selection_index;
+    }
+
+    // Update the selection arrow
+    selection_arrow(menu_items_array[previous_selection_index], menu_items_array[current_selection_index]);
+}
+
+void selection_arrow(menu_items previous_delta, menu_items current_delta)
+{
+    const int x1 = 6;
+    const int x2 = 9;
+    const int x3 = 6;
+    const int initial_y1 = 38;
+    const int initial_y2 = 40;
+    const int initial_y3 = 43;
+
+    // Erase the arrow at the previous position by drawing over it with the background color
+    ST7735_FillTriangle(x1, initial_y1 + previous_delta, x2, initial_y2 + previous_delta, x3, initial_y3 + previous_delta, ST7735_BLACK);
+
+    // Draw the arrow at the new position
+    ST7735_FillTriangle(x1, initial_y1 + current_delta, x2, initial_y2 + current_delta, x3, initial_y3 + current_delta, ST7735_WHITE);
 }
