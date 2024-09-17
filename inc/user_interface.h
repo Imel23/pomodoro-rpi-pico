@@ -8,6 +8,7 @@
 #include "hardware/spi.h"
 #include "st7735.h"
 #include "fonts.h"
+#include "buttons_handler.h"
 
 // Screen dimensions and layout constants
 #define SCREEN_WIDTH 128
@@ -76,5 +77,47 @@ void update_time_display(int previous_minutes, int previous_seconds, int current
  * @param completion_percentage Progress percentage (0-100)
  */
 void update_progress_bar(int completion_percentage);
+
+/*########################### Settings Interface ###########################*/
+
+// Menu items with associated Y positions
+typedef enum menu_items
+{
+    sessions = 38,
+    work_duration = 68,
+    short_duration = 98,
+    long_break = 128
+} menu_items;
+
+/**
+ * @brief Display and navigate the settings menu.
+ *
+ * This function initializes the settings menu view and handles the
+ * navigation between the menu items using up and down buttons.
+ *
+ */
+void settings_view();
+
+/**
+ * @brief Handle the navigation of menu items using buttons.
+ *
+ * This function updates the current menu selection index based on the
+ * button presses (up and down) and wraps around the menu items if the
+ * beginning or end is reached. It also updates the selection arrow
+ * on the screen.
+ *
+ */
+void handle_menu_navigation();
+
+/**
+ * @brief Update the position of the selection arrow on the screen.
+ *
+ * This function erases the arrow from its previous position and draws it
+ * at the new position to indicate the current menu selection.
+ *
+ * @param previous_delta The Y position of the previous menu item.
+ * @param current_delta The Y position of the current menu item.
+ */
+void selection_arrow(menu_items previous_delta, menu_items current_delta);
 
 #endif // USER_INTERFACE_H
