@@ -71,7 +71,6 @@ bool check_button_press(uint8_t button)
 
     uint64_t current_time = to_ms_since_boot(get_absolute_time());
     bool button_state = gpio_get(button);
-    static bool button_was_pressed = false;
 
     if (button_state == 0 && !button_was_pressed[index] &&
         (current_time - last_debounce_time[index]) > DEBOUNCE_DELAY)
