@@ -11,7 +11,7 @@ int main()
 {
     __init();
 
-    ST7735_SetRotation(rot);
+    // ST7735_SetRotation(rot);
 
     bool pause_clicked = false;
 
@@ -21,27 +21,33 @@ int main()
     time.currentSecond = 0;
     time.currentMinute = time.workDuration;
 
+    while (true)
+    {
+        settings_view();
+        sleep_ms(50);
+    }
     draw_initial_view("WORK", time.workDuration, 1, 4);
 
     while (true)
     {
-        uint64_t current_time = to_ms_since_boot(get_absolute_time());
-
         if (is_start_pause_pressed)
         {
+            is_start_pause_pressed = false;
             update_pause_resume_display(pause_clicked);
 
             pause_clicked = !pause_clicked;
+            alarm_fired = true;
         }
 
-        if (pause_clicked && (current_time - last_timer_tick) >= timer_interval)
+        if (pause_clicked)
         {
-            last_timer_tick = current_time;
-
-            // update_timer(&minutes, &seconds, &timer_running);
-            printf("alarm !! \n");
-
-            update_time(&time);
+            if (alarm_fired)
+            {
+                // printf("fire !!!!! \n");
+                alarm_fired = false;
+                alarm_in_us(1000000 * 1);
+                update_time(&time);
+            }
         }
 
         sleep_ms(10);
