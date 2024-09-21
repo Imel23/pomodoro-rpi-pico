@@ -9,7 +9,7 @@
 #include "st7735.h"
 #include "fonts.h"
 #include "buttons_handler.h"
-#include "time_handler.h"
+#include "main.h"
 
 // Screen dimensions and layout constants
 #define SCREEN_WIDTH 128
@@ -30,19 +30,17 @@ void init_display(void);
 /**
  * @brief Draw the initial view of the timer interface.
  *
- * @param timer_state Current state of the timer (e.g., "WORK", "REST")
- * @param minutes TO ADD !!!!!
- * @param current_session Current session number
- * @param total_sessions Total number of sessions
+ * @param time TO ADD !!!!!
  */
-void draw_initial_view(char *timer_state, uint8_t minutes, int current_session, int total_sessions);
+
+void home_view(time_s *time);
 
 /**
  * @brief Update the pause/resume button display on the screen.
  *
  * @param is_timer_paused Boolean flag indicating whether the timer is paused
  */
-bool update_pause_resume_display(bool is_timer_paused);
+void update_pause_resume_display(bool *startWork);
 
 /**
  * @brief Update the time display on the screen.
@@ -66,10 +64,10 @@ void update_progress_bar(int completion_percentage);
 // Menu items with associated Y positions
 typedef enum menu_items
 {
-    sessions = 38,
-    work_duration = 68,
-    short_duration = 98,
-    long_break = 128
+    sessions = 10,
+    work_duration = 38,
+    short_duration = 68,
+    long_break = 98
 } menu_items;
 
 /**
@@ -90,8 +88,8 @@ void settings_view();
  * on the screen.
  *
  */
-void handle_menu_navigation();
-
+uint8_t settings_up();
+uint8_t settings_down();
 /**
  * @brief Update the position of the selection arrow on the screen.
  *
@@ -103,4 +101,5 @@ void handle_menu_navigation();
  */
 void selection_arrow(menu_items previous_delta, menu_items current_delta);
 
+void sessions_view(time_s *time);
 #endif // USER_INTERFACE_H
