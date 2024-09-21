@@ -1,6 +1,8 @@
 #include "buttons_handler.h"
 #include <stdio.h>
+
 #define DEBOUNCE_DELAY 300 // Debounce delay in milliseconds
+#define NUM_BUTTONS 4
 
 // Array of your button GPIO pins
 const uint8_t button_pins[] = {
@@ -8,8 +10,6 @@ const uint8_t button_pins[] = {
     INCREA_BUTTON,
     DECREA_BUTTON,
     SETT_BUTTON};
-
-#define NUM_BUTTONS 4
 
 volatile bool is_start_pause_pressed = false;
 volatile bool is_settings_pressed = false;

@@ -3,9 +3,13 @@
 #include "user_interface.h"
 #include "main.h"
 #include "buttons_handler.h"
-#include "time_handler.h"
 
-time_s time = {5, 2, 0, 0};
+time_s time = {8, 25, 5, 10, 25, 0, 1};
+pomodoro_e state = HOME;
+
+bool startWork = false;
+bool intializeView = true;
+uint8_t idx = 0;
 
 int main()
 {
@@ -13,41 +17,27 @@ int main()
 
     // ST7735_SetRotation(rot);
 
-    bool pause_clicked = false;
-
-    uint64_t last_timer_tick = 0;
-    const uint64_t timer_interval = 1000;
-
-    time.currentSecond = 0;
-    time.currentMinute = time.workDuration;
-
     while (true)
     {
-        settings_view();
-        sleep_ms(50);
-    }
-    draw_initial_view("WORK", time.workDuration, 1, 4);
-
-    while (true)
-    {
-        if (is_start_pause_pressed)
+        switch (state)
         {
-            is_start_pause_pressed = false;
-            update_pause_resume_display(pause_clicked);
-
-            pause_clicked = !pause_clicked;
-            alarm_fired = true;
-        }
-
-        if (pause_clicked)
-        {
-            if (alarm_fired)
-            {
-                // printf("fire !!!!! \n");
-                alarm_fired = false;
-                alarm_in_us(1000000 * 1);
-                update_time(&time);
-            }
+        case HOME:
+            home_state();
+            break;
+        case SETTINGS:
+            settings_state();
+            break;
+        case SESSIONS:
+            sessions_state();
+            break;
+        case WORKDURATION:
+            break;
+        case SHORTBREAK:
+            break;
+        case LONGBREAK:
+            break;
+        default:
+            break;
         }
 
         sleep_ms(10);
@@ -61,4 +51,135 @@ void __init()
     stdio_init_all();
     init_display();
     init_buttons();
+}
+
+void home_state()
+{
+    if (intializeView)
+    {
+        home_view(&time);
+        intializeView = false;
+        startWork = false;
+    }
+    if (is_start_pause_pressed)
+    {
+        is_start_pause_pressed = false;
+        alarm_fired = true;
+        update_pause_resume_display(&startWork);
+    }
+
+    if (startWork)
+    {
+        if (alarm_fired)
+        {
+            alarm_fired = false;
+            alarm_in_us(1000000 * 1);
+            update_time(&time);
+        }
+    }
+
+    if (is_settings_pressed)
+    {
+        is_settings_pressed = false;
+        state = SETTINGS;
+        intializeView = true;
+    }
+
+    if (is_increase_pressed)
+    {
+        is_increase_pressed = false;
+    }
+    if (is_decrease_pressed)
+    {
+        is_decrease_pressed = false;
+    }
+}
+
+void settings_state()
+{
+    if (intializeView)
+    {
+        settings_view();
+        intializeView = false;
+    }
+
+    if (is_settings_pressed)
+    {
+        is_settings_pressed = false;
+        state = HOME;
+        intializeView = true;
+    }
+
+    if (is_increase_pressed)
+    {
+        is_increase_pressed = false;
+        idx = settings_up();
+    }
+
+    if (is_decrease_pressed)
+    {
+        is_decrease_pressed = false;
+        idx = settings_down();
+    }
+
+    if (is_start_pause_pressed)
+    {
+        is_start_pause_pressed = false;
+        switch (idx)
+        {
+        case 0:
+            state = SESSIONS;
+            intializeView = true;
+            break;
+        case 1:
+            state = WORKDURATION;
+            intializeView = true;
+            break;
+        case 2:
+            state = SHORTBREAK;
+            intializeView = true;
+            break;
+        case 3:
+            state = LONGBREAK;
+            intializeView = true;
+            break;
+        default:
+            break;
+        }
+    }
+}
+
+void sessions_state()
+{
+    if (intializeView)
+    {
+        sessions_view(&time);
+        intializeView = false;
+    }
+    if (is_start_pause_pressed)
+    {
+        is_start_pause_pressed = false;
+        state = HOME;
+        intializeView = true;
+    }
+
+    if (is_settings_pressed)
+    {
+        is_settings_pressed = false;
+        state = HOME;
+        intializeView = true;
+    }
+
+    if (is_increase_pressed)
+    {
+        is_increase_pressed = false;
+        state = HOME;
+        intializeView = true;
+    }
+    if (is_decrease_pressed)
+    {
+        is_decrease_pressed = false;
+        state = HOME;
+        intializeView = true;
+    }
 }

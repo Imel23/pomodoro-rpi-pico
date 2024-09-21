@@ -26,52 +26,37 @@ void init_display()
 
 /*########################### Home Interface ###########################*/
 
-void draw_initial_view(char *timer_state, uint8_t minutes, int current_session, int total_sessions)
+void home_view(time_s *time)
 {
     // Clear the screen and draw the initial view
     ST7735_FillScreen(ST7735_BLACK);
-    ST7735_DrawString(8, 8, timer_state, Font_11x18, ST7735_WHITE, ST7735_BLACK);
+    ST7735_DrawString(8, 8, "WORK", Font_11x18, ST7735_WHITE, ST7735_BLACK);
 
     // Draw session indicator
     char session_indicator[5];
-    sprintf(session_indicator, "%02d/%02d", current_session, total_sessions);
+    sprintf(session_indicator, "%02d/%02d", time->currentSession, time->sessions);
     ST7735_DrawString(3, BUTTONS_Y, session_indicator, Font_7x10, ST7735_WHITE, ST7735_BLACK);
 
     // Draw menu label
-    ST7735_DrawString(95, BUTTONS_Y, "CONF", Font_7x10, ST7735_WHITE, ST7735_BLACK);
+    ST7735_DrawString(95, BUTTONS_Y, "MENU", Font_7x10, ST7735_WHITE, ST7735_BLACK);
 
     // Initially, draw "START" at the beginning
     ST7735_DrawString(47, BUTTONS_Y, "START", Font_7x10, ST7735_WHITE, ST7735_BLACK);
 
     ST7735_DrawRect(PROGRESS_BAR_X, PROGRESS_BAR_Y, PROGRESS_BAR_WIDTH, PROGRESS_BAR_HEIGHT, ST7735_WHITE);
 
-    update_minutes(minutes);
+    update_minutes(time->currentMinute);
 
-    update_seconds(0);
+    update_seconds(time->currentSecond);
 }
 
-bool update_pause_resume_display(bool is_timer_paused)
+void update_pause_resume_display(bool *startWork)
 {
-    static bool previous_pause_state = false;
-    static bool firstTime = true;
-
-    if (firstTime)
-    {
-        ST7735_FillRectangle(47, BUTTONS_Y, 48, 10, ST7735_BLACK);
-        ST7735_DrawString(47, BUTTONS_Y, "PAUSE", Font_7x10, ST7735_WHITE, ST7735_BLACK);
-        firstTime = false;
-    }
-    // Update "PAUSE"/"RESUME" label based on pause state
-    else if (is_timer_paused != previous_pause_state)
-    {
-        const char *button_text = is_timer_paused ? "RESUME" : "PAUSE";
-        // Clear the previous text by overwriting it with the background color (black)
-        ST7735_FillRectangle(47, BUTTONS_Y, 48, 10, ST7735_BLACK);
-        ST7735_DrawString(47, BUTTONS_Y, button_text, Font_7x10, ST7735_WHITE, ST7735_BLACK);
-    }
-    previous_pause_state = is_timer_paused;
-
-    return is_timer_paused;
+    *startWork = !*startWork;
+    const char *button_text = *startWork ? "PAUSE" : "RESUME";
+    // Clear the previous text by overwriting it with the background color (black)
+    ST7735_FillRectangle(47, BUTTONS_Y, 48, 10, ST7735_BLACK);
+    ST7735_DrawString(47, BUTTONS_Y, button_text, Font_7x10, ST7735_WHITE, ST7735_BLACK);
 }
 
 void update_time(time_s *time)
@@ -151,68 +136,59 @@ void update_progress_bar(int completion_percentage)
 // Array defining the menu order
 menu_items menu_items_array[] = {sessions, work_duration, short_duration, long_break};
 #define MENU_ITEM_COUNT (sizeof(menu_items_array) / sizeof(menu_items_array[0]))
-volatile int current_selection_index = 0;
+
+uint8_t previous_selection_index = 0; // Keep track of the previous selection
+uint8_t current_selection_index = 0;
 
 // Function to display the settings view
 void settings_view()
 {
-    static bool is_initial_state_drawn = false;
 
-    if (!is_initial_state_drawn)
-    {
-        // Draw static elements
-        ST7735_FillScreen(ST7735_BLACK);
-        ST7735_DrawString(7, 16, "Settings", Font_11x18, ST7735_WHITE, ST7735_BLACK);
-        ST7735_DrawLineThick(6, 35, 117, 35, ST7735_WHITE, 2);
-        ST7735_DrawString(12, 46, "Sessions", Font_7x10, ST7735_WHITE, ST7735_BLACK);
-        ST7735_DrawString(12, 76, "Work Duration", Font_7x10, ST7735_WHITE, ST7735_BLACK);
-        ST7735_DrawString(12, 106, "Short Break", Font_7x10, ST7735_WHITE, ST7735_BLACK);
-        ST7735_DrawString(12, 136, "Long Break", Font_7x10, ST7735_WHITE, ST7735_BLACK);
-        is_initial_state_drawn = true; // Mark initial state as drawn
-    }
-    handle_menu_navigation();
+    // Draw static elements
+    ST7735_FillScreen(ST7735_BLACK);
+    ST7735_DrawString(7, 16, "Settings", Font_11x18, ST7735_WHITE, ST7735_BLACK);
+    ST7735_DrawLineThick(6, 35, 117, 35, ST7735_WHITE, 2);
+    ST7735_DrawString(12, 46, "Sessions", Font_7x10, ST7735_WHITE, ST7735_BLACK);
+    ST7735_DrawString(12, 76, "Work Duration", Font_7x10, ST7735_WHITE, ST7735_BLACK);
+    ST7735_DrawString(12, 106, "Short Break", Font_7x10, ST7735_WHITE, ST7735_BLACK);
+    ST7735_DrawString(12, 136, "Long Break", Font_7x10, ST7735_WHITE, ST7735_BLACK);
+
+    selection_arrow(menu_items_array[previous_selection_index], menu_items_array[current_selection_index]);
 }
 
-void handle_menu_navigation()
+uint8_t settings_up()
 {
-    static int previous_selection_index = 0; // Keep track of the previous selection
-
-    // Check for button presses
-    if (is_increase_pressed)
+    previous_selection_index = current_selection_index;
+    // Move to the previous menu item
+    if (current_selection_index == 0)
     {
-        is_increase_pressed = false;
-        previous_selection_index = current_selection_index;
-        // Move to the previous menu item
-        if (current_selection_index == 0)
-        {
-            current_selection_index = MENU_ITEM_COUNT - 1; // Wrap around to the last item
-        }
-        else
-        {
-            current_selection_index--;
-        }
-    }
-    else if (is_decrease_pressed)
-    {
-        is_decrease_pressed = false;
-        previous_selection_index = current_selection_index;
-        // Move to the next menu item
-        current_selection_index = (current_selection_index + 1) % MENU_ITEM_COUNT;
+        current_selection_index = MENU_ITEM_COUNT - 1; // Wrap around to the last item
     }
     else
     {
-        // No button press; previous and current selection remain the same
-        previous_selection_index = current_selection_index;
+        current_selection_index--;
     }
-    printf("current selction index: %d\n", current_selection_index);
     // Update the selection arrow
     selection_arrow(menu_items_array[previous_selection_index], menu_items_array[current_selection_index]);
+    return current_selection_index;
+}
+
+uint8_t settings_down()
+{
+    previous_selection_index = current_selection_index;
+    // Move to the next menu item
+    current_selection_index = (current_selection_index + 1) % MENU_ITEM_COUNT;
+
+    // Update the selection arrow
+    selection_arrow(menu_items_array[previous_selection_index], menu_items_array[current_selection_index]);
+
+    return current_selection_index;
 }
 
 void selection_arrow(menu_items previous_delta, menu_items current_delta)
 {
     const int x1 = 6;
-    const int x2 = 9;
+    const int x2 = 10;
     const int x3 = 6;
     const int initial_y1 = 38;
     const int initial_y2 = 40;
@@ -223,4 +199,21 @@ void selection_arrow(menu_items previous_delta, menu_items current_delta)
 
     // Draw the arrow at the new position
     ST7735_FillTriangle(x1, initial_y1 + current_delta, x2, initial_y2 + current_delta, x3, initial_y3 + current_delta, ST7735_WHITE);
+}
+
+/*########################### Sessions Interface ###########################*/
+
+// Function to display the settings view
+void sessions_view(time_s *time)
+{
+    char sessionNumber[6];
+    sprintf(sessionNumber, "%02d min", time->workDuration);
+
+    // Draw static elements
+    ST7735_FillScreen(ST7735_BLACK);
+    ST7735_DrawString(20, 16, "Sessions", Font_11x18, ST7735_WHITE, ST7735_BLACK);
+    ST7735_DrawLineThick(6, 35, 117, 35, ST7735_WHITE, 2);
+    ST7735_DrawString(12, 140, "[-]", Font_7x10, ST7735_WHITE, ST7735_BLACK);
+    ST7735_DrawString(92, 140, "[+]", Font_7x10, ST7735_WHITE, ST7735_BLACK);
+    ST7735_DrawString(40, 80, sessionNumber, Font_7x10, ST7735_WHITE, ST7735_BLACK);
 }
