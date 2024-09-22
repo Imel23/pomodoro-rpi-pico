@@ -22,6 +22,15 @@
 #define PROGRESS_BAR_HEIGHT 18
 #define BUTTONS_Y 147
 
+// Menu items with associated Y positions
+typedef enum menu_items
+{
+    SESSIONS_Y = 10,
+    WORKDURATION_Y = 38,
+    SHORTDURATION_Y = 68,
+    LONGBREAK_Y = 98
+} menu_items;
+
 /**
  * @brief Initialize the display hardware and SPI communication.
  */
@@ -48,7 +57,7 @@ void update_pause_resume_display(bool *startWork);
  * @param minute current minute
  * @param second Current second
  */
-void update_time(time_s *time);
+bool update_time(time_s *time);
 void update_minutes(uint8_t minute);
 void update_seconds(uint8_t second);
 
@@ -60,15 +69,6 @@ void update_seconds(uint8_t second);
 void update_progress_bar(int completion_percentage);
 
 /*########################### Settings Interface ###########################*/
-
-// Menu items with associated Y positions
-typedef enum menu_items
-{
-    sessions = 10,
-    work_duration = 38,
-    short_duration = 68,
-    long_break = 98
-} menu_items;
 
 /**
  * @brief Display and navigate the settings menu.
@@ -102,4 +102,24 @@ uint8_t settings_down();
 void selection_arrow(menu_items previous_delta, menu_items current_delta);
 
 void sessions_view(time_s *time);
+void sessions_up();
+void sessions_down();
+void update_sessions(time_s *time);
+
+void work_duration_view(time_s *time);
+void work_duration_up();
+void work_duration_down();
+void update_work_duration(time_s *time);
+
+void short_break_view(time_s *time);
+void short_break_up();
+void short_break_down();
+void short_break_duration(time_s *time);
+
+void long_break_view(time_s *time);
+void long_break_up();
+void long_break_down();
+void long_break_duration(time_s *time);
+
+void tasks_done_view();
 #endif // USER_INTERFACE_H
