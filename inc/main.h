@@ -5,6 +5,7 @@
 
 #include "timer_.h"
 
+#define SECOND 1000000
 typedef struct
 {
     uint8_t sessions;
@@ -23,7 +24,8 @@ typedef enum
     SESSIONS,
     WORKDURATION,
     SHORTBREAK,
-    LONGBREAK
+    LONGBREAK,
+    TASKS_DONE
 } pomodoro_e;
 
 #define rot 2
@@ -31,8 +33,11 @@ typedef enum
 void __init();
 
 void home_state();
-
 void settings_state();
-
 void sessions_state();
+void work_duration_state();
+void short_break_state();
+void long_break_state();
+void tasks_done_state();
+
 #endif

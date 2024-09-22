@@ -82,22 +82,18 @@ void buttons_callback(uint gpio, uint32_t events)
 
     if (gpio == START_PAUSE_BUTTON)
     {
-        printf("button1 clicked\n");
         is_start_pause_pressed = true;
     }
     else if (gpio == INCREA_BUTTON)
     {
-        printf("button2 clicked\n");
         is_increase_pressed = true;
     }
     else if (gpio == DECREA_BUTTON)
     {
-        printf("button3 clicked\n");
         is_decrease_pressed = true;
     }
     else if (gpio == SETT_BUTTON)
     {
-        printf("button4 clicked\n");
         is_settings_pressed = true;
     }
     // sleep_ms(250);
