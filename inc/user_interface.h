@@ -50,7 +50,7 @@ void update_pause_resume_display(bool *startWork);
  * @param minute current minute
  * @param second Current second
  */
-bool update_time(time_s *time);
+bool update_time(time_s *time, uint32_t *percentage, bool *work_ptr);
 void update_minutes(uint8_t minute);
 void update_seconds(uint8_t second);
 
