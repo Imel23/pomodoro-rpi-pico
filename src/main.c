@@ -11,7 +11,11 @@ pomodoro_e state = HOME;
 bool startWork = false;
 bool intializeView = true;
 uint8_t idx = 0;
-uint8_t frame = 0;
+uint8_t blink_fps = 0;
+uint8_t sad_fps = 0;
+uint8_t happy_fps = 0;
+uint32_t percentage = 0;
+bool work = true;
 
 int main()
 {
@@ -89,7 +93,7 @@ void home_state()
         {
             alarm_fired = false;
             alarm_in_us(SECOND);
-            if (update_time(&time))
+            if (update_time(&time, &percentage, &work))
             {
                 state = TASKS_DONE;
                 intializeView = true;
@@ -97,8 +101,19 @@ void home_state()
             }
         }
     }
-
-    eyes_normal_blink();
+    if (!work)
+    {
+        eyes_normal_blink();
+    }
+    else
+    {
+        if (percentage < 30)
+            eyes_normal_blink();
+        else if (percentage < 70)
+            eyes_sad_blink();
+        else
+            eyes_happy_blink();
+    }
 
     if (is_settings_pressed)
     {
@@ -338,42 +353,126 @@ void tasks_done_state()
 
 void eyes_normal_blink()
 {
-    switch (frame)
+    switch (blink_fps)
     {
     case 0:
-        ST7735_DrawImage(45, 30, 72, 44, (uint16_t *)out[0]);
+        ST7735_DrawImage(45, 30, 72, 44, (uint16_t *)image[0]);
         break;
     case 41:
-        ST7735_DrawImage(45, 30, 72, 44, (uint16_t *)out[1]);
+        ST7735_DrawImage(45, 30, 72, 44, (uint16_t *)image[1]);
         break;
     case 42:
-        ST7735_DrawImage(45, 30, 72, 44, (uint16_t *)out[2]);
+        ST7735_DrawImage(45, 30, 72, 44, (uint16_t *)image[2]);
         break;
     case 44:
-        ST7735_DrawImage(45, 30, 72, 44, (uint16_t *)out[3]);
+        ST7735_DrawImage(45, 30, 72, 44, (uint16_t *)image[3]);
         break;
     case 45:
-        ST7735_DrawImage(45, 30, 72, 44, (uint16_t *)out[4]);
+        ST7735_DrawImage(45, 30, 72, 44, (uint16_t *)image[4]);
         break;
     case 46:
-        ST7735_DrawImage(45, 30, 72, 44, (uint16_t *)out[5]);
+        ST7735_DrawImage(45, 30, 72, 44, (uint16_t *)image[5]);
         break;
     case 47:
-        ST7735_DrawImage(45, 30, 72, 44, (uint16_t *)out[4]);
+        ST7735_DrawImage(45, 30, 72, 44, (uint16_t *)image[4]);
         break;
     case 48:
-        ST7735_DrawImage(45, 30, 72, 44, (uint16_t *)out[3]);
+        ST7735_DrawImage(45, 30, 72, 44, (uint16_t *)image[3]);
         break;
     case 49:
-        ST7735_DrawImage(45, 30, 72, 44, (uint16_t *)out[2]);
+        ST7735_DrawImage(45, 30, 72, 44, (uint16_t *)image[2]);
         break;
     case 50:
-        ST7735_DrawImage(45, 30, 72, 44, (uint16_t *)out[1]);
+        ST7735_DrawImage(45, 30, 72, 44, (uint16_t *)image[1]);
         break;
     default:
         break;
     }
-    frame++;
-    if (frame > 50)
-        frame = 0;
+    blink_fps++;
+    if (blink_fps > 50)
+        blink_fps = 0;
+}
+
+void eyes_sad_blink()
+{
+    switch (sad_fps)
+    {
+    case 0:
+        ST7735_DrawImage(45, 30, 72, 44, (uint16_t *)image[0]);
+        break;
+    case 41:
+        ST7735_DrawImage(45, 30, 72, 44, (uint16_t *)image[6]);
+        break;
+    case 42:
+        ST7735_DrawImage(45, 30, 72, 44, (uint16_t *)image[7]);
+        break;
+    case 44:
+        ST7735_DrawImage(45, 30, 72, 44, (uint16_t *)image[8]);
+        break;
+    case 45:
+        ST7735_DrawImage(45, 30, 72, 44, (uint16_t *)image[9]);
+        break;
+    case 46:
+        ST7735_DrawImage(45, 30, 72, 44, (uint16_t *)image[10]);
+        break;
+    case 87:
+        ST7735_DrawImage(45, 30, 72, 44, (uint16_t *)image[9]);
+        break;
+    case 88:
+        ST7735_DrawImage(45, 30, 72, 44, (uint16_t *)image[8]);
+        break;
+    case 89:
+        ST7735_DrawImage(45, 30, 72, 44, (uint16_t *)image[7]);
+        break;
+    case 90:
+        ST7735_DrawImage(45, 30, 72, 44, (uint16_t *)image[6]);
+        break;
+    default:
+        break;
+    }
+    sad_fps++;
+    if (sad_fps > 90)
+        sad_fps = 0;
+}
+
+void eyes_happy_blink()
+{
+    switch (happy_fps)
+    {
+    case 0:
+        ST7735_DrawImage(45, 30, 72, 44, (uint16_t *)image[0]);
+        break;
+    case 41:
+        ST7735_DrawImage(45, 30, 72, 44, (uint16_t *)image[11]);
+        break;
+    case 42:
+        ST7735_DrawImage(45, 30, 72, 44, (uint16_t *)image[12]);
+        break;
+    case 44:
+        ST7735_DrawImage(45, 30, 72, 44, (uint16_t *)image[13]);
+        break;
+    case 45:
+        ST7735_DrawImage(45, 30, 72, 44, (uint16_t *)image[14]);
+        break;
+    case 46:
+        ST7735_DrawImage(45, 30, 72, 44, (uint16_t *)image[15]);
+        break;
+    case 87:
+        ST7735_DrawImage(45, 30, 72, 44, (uint16_t *)image[14]);
+        break;
+    case 88:
+        ST7735_DrawImage(45, 30, 72, 44, (uint16_t *)image[13]);
+        break;
+    case 89:
+        ST7735_DrawImage(45, 30, 72, 44, (uint16_t *)image[12]);
+        break;
+    case 90:
+        ST7735_DrawImage(45, 30, 72, 44, (uint16_t *)image[11]);
+        break;
+    default:
+        break;
+    }
+    happy_fps++;
+    if (happy_fps > 90)
+        happy_fps = 0;
 }

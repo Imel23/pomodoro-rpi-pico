@@ -62,7 +62,7 @@ void update_pause_resume_display(bool *startWork)
     ST7735_DrawString(115, 12, button_text, Font_7x10, ST7735_WHITE, ST7735_BLACK);
 }
 
-bool update_time(time_s *time)
+bool update_time(time_s *time, uint32_t *percentage, bool *work_ptr)
 {
     if ((time->currentSecond == 0) && (time->currentMinute != 0))
     {
@@ -82,6 +82,7 @@ bool update_time(time_s *time)
         }
 
         work = !work;
+        *work_ptr = work;
         is_outline_drawn = false;
         // erase the progress bar
         ST7735_FillRectangle(20, 100, 120, 20, ST7735_BLACK);
@@ -127,8 +128,9 @@ bool update_time(time_s *time)
     // Update the time display if changed
     update_seconds(time->currentSecond);
 
+    *percentage = (int)(((progress_bar_time * 60) - ((time->currentMinute * 60) + time->currentSecond)) * 100 / (progress_bar_time * 60));
     // Update the progress bar
-    update_progress_bar((int)(((progress_bar_time * 60) - ((time->currentMinute * 60) + time->currentSecond)) * 100 / (progress_bar_time * 60)));
+    update_progress_bar(*percentage);
     return false;
 }
 

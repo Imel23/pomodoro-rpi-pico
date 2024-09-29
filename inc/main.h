@@ -5,7 +5,7 @@
 
 #include "timer_.h"
 
-#define SECOND 1000000
+#define SECOND 100000
 typedef struct
 {
     uint8_t sessions;
@@ -40,5 +40,7 @@ void short_break_state();
 void long_break_state();
 void tasks_done_state();
 void eyes_normal_blink();
+void eyes_sad_blink();
+void eyes_happy_blink();
 
 #endif
