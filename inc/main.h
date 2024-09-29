@@ -28,7 +28,7 @@ typedef enum
     TASKS_DONE
 } pomodoro_e;
 
-#define rot 2
+#define rot 3
 
 void __init();
 
@@ -39,5 +39,6 @@ void work_duration_state();
 void short_break_state();
 void long_break_state();
 void tasks_done_state();
+void eyes_normal_blink();
 
 #endif

@@ -14,21 +14,14 @@
 // Screen dimensions and layout constants
 #define SCREEN_WIDTH 128
 #define SCREEN_HEIGHT 160
-#define TIME_X 70
-#define TIME_Y 8
-#define PROGRESS_BAR_X 3
-#define PROGRESS_BAR_Y 80
-#define PROGRESS_BAR_WIDTH 122
-#define PROGRESS_BAR_HEIGHT 18
-#define BUTTONS_Y 147
 
 // Menu items with associated Y positions
 typedef enum menu_items
 {
-    SESSIONS_Y = 10,
-    WORKDURATION_Y = 38,
-    SHORTDURATION_Y = 68,
-    LONGBREAK_Y = 98
+    SESSIONS_Y = 40,
+    WORKDURATION_Y = 60,
+    SHORTDURATION_Y = 80,
+    LONGBREAK_Y = 100
 } menu_items;
 
 /**

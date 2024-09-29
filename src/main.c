@@ -3,6 +3,7 @@
 #include "user_interface.h"
 #include "main.h"
 #include "buttons_handler.h"
+#include "testimg.h"
 
 time_s time = {5, 2, 1, 2, 2, 0, 1};
 pomodoro_e state = HOME;
@@ -10,12 +11,20 @@ pomodoro_e state = HOME;
 bool startWork = false;
 bool intializeView = true;
 uint8_t idx = 0;
+uint8_t frame = 0;
 
 int main()
 {
     __init();
 
-    // ST7735_SetRotation(rot);
+    ST7735_SetRotation(rot);
+
+    // ST7735_FillScreen(ST7735_BLACK);
+    // while (true)
+    // {
+    //     eyes_normal_blink();
+    //     sleep_ms(33);
+    // }
 
     while (true)
     {
@@ -46,7 +55,7 @@ int main()
             break;
         }
 
-        sleep_ms(10);
+        sleep_ms(33);
     }
 
     return 0;
@@ -88,6 +97,8 @@ void home_state()
             }
         }
     }
+
+    eyes_normal_blink();
 
     if (is_settings_pressed)
     {
@@ -173,7 +184,6 @@ void sessions_state()
         is_start_pause_pressed = false;
         state = SETTINGS;
         update_sessions(&time);
-        idx = 0;
         intializeView = true;
     }
 
@@ -208,7 +218,6 @@ void work_duration_state()
         is_start_pause_pressed = false;
         state = SETTINGS;
         update_work_duration(&time);
-        idx = 0;
         intializeView = true;
     }
 
@@ -243,7 +252,6 @@ void short_break_state()
         is_start_pause_pressed = false;
         state = SETTINGS;
         short_break_duration(&time);
-        idx = 0;
         intializeView = true;
     }
 
@@ -278,7 +286,6 @@ void long_break_state()
         is_start_pause_pressed = false;
         state = SETTINGS;
         long_break_duration(&time);
-        idx = 0;
         intializeView = true;
     }
 
@@ -327,4 +334,46 @@ void tasks_done_state()
     {
         is_decrease_pressed = false;
     }
+}
+
+void eyes_normal_blink()
+{
+    switch (frame)
+    {
+    case 0:
+        ST7735_DrawImage(45, 30, 72, 44, (uint16_t *)out[0]);
+        break;
+    case 41:
+        ST7735_DrawImage(45, 30, 72, 44, (uint16_t *)out[1]);
+        break;
+    case 42:
+        ST7735_DrawImage(45, 30, 72, 44, (uint16_t *)out[2]);
+        break;
+    case 44:
+        ST7735_DrawImage(45, 30, 72, 44, (uint16_t *)out[3]);
+        break;
+    case 45:
+        ST7735_DrawImage(45, 30, 72, 44, (uint16_t *)out[4]);
+        break;
+    case 46:
+        ST7735_DrawImage(45, 30, 72, 44, (uint16_t *)out[5]);
+        break;
+    case 47:
+        ST7735_DrawImage(45, 30, 72, 44, (uint16_t *)out[4]);
+        break;
+    case 48:
+        ST7735_DrawImage(45, 30, 72, 44, (uint16_t *)out[3]);
+        break;
+    case 49:
+        ST7735_DrawImage(45, 30, 72, 44, (uint16_t *)out[2]);
+        break;
+    case 50:
+        ST7735_DrawImage(45, 30, 72, 44, (uint16_t *)out[1]);
+        break;
+    default:
+        break;
+    }
+    frame++;
+    if (frame > 50)
+        frame = 0;
 }
