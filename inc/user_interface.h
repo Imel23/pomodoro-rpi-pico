@@ -115,4 +115,9 @@ void long_break_down();
 void long_break_duration(time_s *time);
 
 void tasks_done_view();
+
+void eyes_normal_blink();
+void eyes_sad_blink();
+void eyes_happy_blink();
+
 #endif // USER_INTERFACE_H
