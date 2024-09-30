@@ -129,5 +129,6 @@ void eyes_normal_blink();
 void eyes_sad_blink();
 void eyes_happy_blink();
 void angry_face();
+void stars_face();
 
 #endif // USER_INTERFACE_H
