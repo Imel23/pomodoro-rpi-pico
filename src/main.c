@@ -114,10 +114,12 @@ void home_state()
     if (is_increase_pressed)
     {
         is_increase_pressed = false;
+        face = ANGRY;
     }
     if (is_decrease_pressed)
     {
         is_decrease_pressed = false;
+        face = STARS;
     }
 }
 

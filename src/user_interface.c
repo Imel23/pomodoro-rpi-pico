@@ -498,9 +498,17 @@ void tasks_done_view()
 uint8_t blink_fps = 0;
 uint8_t sad_fps = 0;
 uint8_t happy_fps = 0;
+uint8_t angry_fps = 0;
+faces_e face = EYES;
 
 void eyes_normal_blink()
 {
+    if (face == ANGRY)
+    {
+        angry_face();
+        return;
+    }
+
     switch (blink_fps)
     {
     case 0:
@@ -543,6 +551,12 @@ void eyes_normal_blink()
 
 void eyes_sad_blink()
 {
+    if (face == ANGRY)
+    {
+        angry_face();
+        return;
+    }
+
     switch (sad_fps)
     {
     case 0:
@@ -585,6 +599,12 @@ void eyes_sad_blink()
 
 void eyes_happy_blink()
 {
+    if (face == ANGRY)
+    {
+        angry_face();
+        return;
+    }
+
     switch (happy_fps)
     {
     case 0:
@@ -623,4 +643,28 @@ void eyes_happy_blink()
     happy_fps++;
     if (happy_fps > 90)
         happy_fps = 0;
+}
+
+void angry_face()
+{
+    switch (angry_fps)
+    {
+    case 0:
+        ST7735_DrawImage(45, 10, 72, 44, (uint16_t *)angry[0]);
+        break;
+    case 30:
+        ST7735_DrawImage(45, 10, 72, 44, (uint16_t *)angry[1]);
+        break;
+    case 60:
+        ST7735_DrawImage(45, 10, 72, 44, (uint16_t *)angry[2]);
+        break;
+    default:
+        break;
+    }
+    angry_fps++;
+    if (angry_fps > 90)
+    {
+        angry_fps = 0;
+        face = EYES;
+    }
 }

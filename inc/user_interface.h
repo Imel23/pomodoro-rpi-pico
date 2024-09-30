@@ -24,6 +24,15 @@ typedef enum menu_items
     LONGBREAK_Y = 100
 } menu_items;
 
+typedef enum faces
+{
+    EYES,
+    ANGRY,
+    STARS
+} faces_e;
+
+extern faces_e face;
+
 /**
  * @brief Initialize the display hardware and SPI communication.
  */
@@ -119,5 +128,6 @@ void tasks_done_view();
 void eyes_normal_blink();
 void eyes_sad_blink();
 void eyes_happy_blink();
+void angry_face();
 
 #endif // USER_INTERFACE_H
