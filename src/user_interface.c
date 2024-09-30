@@ -499,6 +499,8 @@ uint8_t blink_fps = 0;
 uint8_t sad_fps = 0;
 uint8_t happy_fps = 0;
 uint8_t angry_fps = 0;
+uint8_t stars_fps1 = 0;
+uint8_t stars_fps2 = 0;
 faces_e face = EYES;
 
 void eyes_normal_blink()
@@ -506,6 +508,11 @@ void eyes_normal_blink()
     if (face == ANGRY)
     {
         angry_face();
+        return;
+    }
+    else if (face == STARS)
+    {
+        stars_face();
         return;
     }
 
@@ -666,5 +673,62 @@ void angry_face()
     {
         angry_fps = 0;
         face = EYES;
+    }
+}
+
+void stars_face()
+{
+    switch (stars_fps1)
+    {
+    case 0:
+        ST7735_DrawImage(45, 10, 72, 44, (uint16_t *)stars[0]);
+        break;
+    case 1:
+        ST7735_DrawImage(45, 10, 72, 44, (uint16_t *)stars[1]);
+        break;
+    case 2:
+        ST7735_DrawImage(45, 10, 72, 44, (uint16_t *)stars[2]);
+        break;
+    case 3:
+        ST7735_DrawImage(45, 10, 72, 44, (uint16_t *)stars[3]);
+        break;
+    case 4:
+        ST7735_DrawImage(45, 10, 72, 44, (uint16_t *)stars[4]);
+        break;
+    case 5:
+        ST7735_DrawImage(45, 10, 72, 44, (uint16_t *)stars[5]);
+        break;
+    case 6:
+        ST7735_DrawImage(45, 10, 72, 44, (uint16_t *)stars[6]);
+        break;
+    case 7:
+        ST7735_DrawImage(45, 10, 72, 44, (uint16_t *)stars[7]);
+        break;
+    case 8:
+        ST7735_DrawImage(45, 10, 72, 44, (uint16_t *)stars[8]);
+        break;
+    case 9:
+        ST7735_DrawImage(45, 10, 72, 44, (uint16_t *)stars[9]);
+        break;
+    case 10:
+        ST7735_DrawImage(45, 10, 72, 44, (uint16_t *)stars[10]);
+        break;
+    case 11:
+        ST7735_DrawImage(45, 10, 72, 44, (uint16_t *)stars[11]);
+        break;
+
+    default:
+        break;
+    }
+    stars_fps1++;
+    if (stars_fps1 > 11)
+    {
+        stars_fps1 = 0;
+        stars_fps2++;
+        if (stars_fps2 > 5)
+        {
+            stars_fps2 = 0;
+            face = EYES;
+        }
     }
 }
