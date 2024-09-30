@@ -39,8 +39,5 @@ void work_duration_state();
 void short_break_state();
 void long_break_state();
 void tasks_done_state();
-void eyes_normal_blink();
-void eyes_sad_blink();
-void eyes_happy_blink();
 
 #endif

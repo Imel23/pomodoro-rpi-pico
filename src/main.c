@@ -3,7 +3,6 @@
 #include "user_interface.h"
 #include "main.h"
 #include "buttons_handler.h"
-#include "testimg.h"
 
 time_s time = {5, 2, 1, 2, 2, 0, 1};
 pomodoro_e state = HOME;
@@ -11,9 +10,6 @@ pomodoro_e state = HOME;
 bool startWork = false;
 bool intializeView = true;
 uint8_t idx = 0;
-uint8_t blink_fps = 0;
-uint8_t sad_fps = 0;
-uint8_t happy_fps = 0;
 uint32_t percentage = 0;
 bool work = true;
 
@@ -22,13 +18,6 @@ int main()
     __init();
 
     ST7735_SetRotation(rot);
-
-    // ST7735_FillScreen(ST7735_BLACK);
-    // while (true)
-    // {
-    //     eyes_normal_blink();
-    //     sleep_ms(33);
-    // }
 
     while (true)
     {
@@ -349,130 +338,4 @@ void tasks_done_state()
     {
         is_decrease_pressed = false;
     }
-}
-
-void eyes_normal_blink()
-{
-    switch (blink_fps)
-    {
-    case 0:
-        ST7735_DrawImage(45, 30, 72, 44, (uint16_t *)image[0]);
-        break;
-    case 41:
-        ST7735_DrawImage(45, 30, 72, 44, (uint16_t *)image[1]);
-        break;
-    case 42:
-        ST7735_DrawImage(45, 30, 72, 44, (uint16_t *)image[2]);
-        break;
-    case 44:
-        ST7735_DrawImage(45, 30, 72, 44, (uint16_t *)image[3]);
-        break;
-    case 45:
-        ST7735_DrawImage(45, 30, 72, 44, (uint16_t *)image[4]);
-        break;
-    case 46:
-        ST7735_DrawImage(45, 30, 72, 44, (uint16_t *)image[5]);
-        break;
-    case 47:
-        ST7735_DrawImage(45, 30, 72, 44, (uint16_t *)image[4]);
-        break;
-    case 48:
-        ST7735_DrawImage(45, 30, 72, 44, (uint16_t *)image[3]);
-        break;
-    case 49:
-        ST7735_DrawImage(45, 30, 72, 44, (uint16_t *)image[2]);
-        break;
-    case 50:
-        ST7735_DrawImage(45, 30, 72, 44, (uint16_t *)image[1]);
-        break;
-    default:
-        break;
-    }
-    blink_fps++;
-    if (blink_fps > 50)
-        blink_fps = 0;
-}
-
-void eyes_sad_blink()
-{
-    switch (sad_fps)
-    {
-    case 0:
-        ST7735_DrawImage(45, 30, 72, 44, (uint16_t *)image[0]);
-        break;
-    case 41:
-        ST7735_DrawImage(45, 30, 72, 44, (uint16_t *)image[6]);
-        break;
-    case 42:
-        ST7735_DrawImage(45, 30, 72, 44, (uint16_t *)image[7]);
-        break;
-    case 44:
-        ST7735_DrawImage(45, 30, 72, 44, (uint16_t *)image[8]);
-        break;
-    case 45:
-        ST7735_DrawImage(45, 30, 72, 44, (uint16_t *)image[9]);
-        break;
-    case 46:
-        ST7735_DrawImage(45, 30, 72, 44, (uint16_t *)image[10]);
-        break;
-    case 87:
-        ST7735_DrawImage(45, 30, 72, 44, (uint16_t *)image[9]);
-        break;
-    case 88:
-        ST7735_DrawImage(45, 30, 72, 44, (uint16_t *)image[8]);
-        break;
-    case 89:
-        ST7735_DrawImage(45, 30, 72, 44, (uint16_t *)image[7]);
-        break;
-    case 90:
-        ST7735_DrawImage(45, 30, 72, 44, (uint16_t *)image[6]);
-        break;
-    default:
-        break;
-    }
-    sad_fps++;
-    if (sad_fps > 90)
-        sad_fps = 0;
-}
-
-void eyes_happy_blink()
-{
-    switch (happy_fps)
-    {
-    case 0:
-        ST7735_DrawImage(45, 30, 72, 44, (uint16_t *)image[0]);
-        break;
-    case 41:
-        ST7735_DrawImage(45, 30, 72, 44, (uint16_t *)image[11]);
-        break;
-    case 42:
-        ST7735_DrawImage(45, 30, 72, 44, (uint16_t *)image[12]);
-        break;
-    case 44:
-        ST7735_DrawImage(45, 30, 72, 44, (uint16_t *)image[13]);
-        break;
-    case 45:
-        ST7735_DrawImage(45, 30, 72, 44, (uint16_t *)image[14]);
-        break;
-    case 46:
-        ST7735_DrawImage(45, 30, 72, 44, (uint16_t *)image[15]);
-        break;
-    case 87:
-        ST7735_DrawImage(45, 30, 72, 44, (uint16_t *)image[14]);
-        break;
-    case 88:
-        ST7735_DrawImage(45, 30, 72, 44, (uint16_t *)image[13]);
-        break;
-    case 89:
-        ST7735_DrawImage(45, 30, 72, 44, (uint16_t *)image[12]);
-        break;
-    case 90:
-        ST7735_DrawImage(45, 30, 72, 44, (uint16_t *)image[11]);
-        break;
-    default:
-        break;
-    }
-    happy_fps++;
-    if (happy_fps > 90)
-        happy_fps = 0;
 }
