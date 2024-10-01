@@ -141,13 +141,13 @@ void settings_state()
     if (is_increase_pressed)
     {
         is_increase_pressed = false;
-        idx = settings_up();
+        idx = settings_down();
     }
 
     if (is_decrease_pressed)
     {
         is_decrease_pressed = false;
-        idx = settings_down();
+        idx = settings_up();
     }
 
     if (is_start_pause_pressed)

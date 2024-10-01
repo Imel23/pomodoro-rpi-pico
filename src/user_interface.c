@@ -36,7 +36,7 @@ void home_view(time_s *time)
 {
     // Clear the screen and draw the initial view
     ST7735_FillScreen(ST7735_BLACK);
-    ST7735_DrawString(8, 110, "WORK", Font_7x10, ST7735_WHITE, ST7735_BLACK);
+    ST7735_DrawString(8, 110, "WORK", Font_7x10, ST7735_CYAN, ST7735_BLACK);
 
     // Draw session indicator
     char session_indicator[5];
@@ -44,7 +44,7 @@ void home_view(time_s *time)
     ST7735_DrawString(60, 110, session_indicator, Font_7x10, ST7735_CYAN, ST7735_BLACK);
 
     // Initially, draw "START" at the beginning
-    ST7735_DrawString(115, 110, "START", Font_7x10, ST7735_WHITE, ST7735_BLACK);
+    ST7735_DrawString(115, 110, "START", Font_7x10, ST7735_CYAN, ST7735_BLACK);
 
     update_minutes(time->currentMinute);
     update_seconds(time->currentSecond);
@@ -57,7 +57,7 @@ void update_pause_resume_display(bool *startWork)
     const char *button_text = *startWork ? "PAUSE" : "RESUME";
     // Clear the previous text by overwriting it with the background color (black)
     ST7735_FillRectangle(115, 110, 48, 10, ST7735_BLACK);
-    ST7735_DrawString(115, 110, button_text, Font_7x10, ST7735_WHITE, ST7735_BLACK);
+    ST7735_DrawString(115, 110, button_text, Font_7x10, ST7735_CYAN, ST7735_BLACK);
 }
 
 bool update_time(time_s *time, uint32_t *percentage, bool *work_ptr)
@@ -91,7 +91,7 @@ bool update_time(time_s *time, uint32_t *percentage, bool *work_ptr)
             time->currentSecond = 0;
 
             ST7735_FillRectangle(8, 110, 40, 20, ST7735_BLACK);
-            ST7735_DrawString(8, 110, "WORK", Font_7x10, ST7735_WHITE, ST7735_BLACK);
+            ST7735_DrawString(8, 110, "WORK", Font_7x10, ST7735_CYAN, ST7735_BLACK);
 
             time->currentSession++;
             char session_indicator[2];
@@ -137,7 +137,7 @@ void update_minutes(uint8_t minute)
     // Erase the old time by drawing it in black
     ST7735_FillRectangle(40, 70, 33, 10, ST7735_BLACK);
     // Draw the new time in white
-    ST7735_DrawString(40, 70, timeString, Font_16x26, ST7735_CYAN, ST7735_BLACK);
+    ST7735_DrawString(40, 70, timeString, Font_16x26, ST7735_WHITE, ST7735_BLACK);
 }
 
 void update_seconds(uint8_t second)
@@ -149,7 +149,7 @@ void update_seconds(uint8_t second)
     // Erase the old time by drawing it in black
     ST7735_FillRectangle(40 + 50, 70, 48, 10, ST7735_BLACK);
     // Draw the new time in white
-    ST7735_DrawString(40 + 50, 70, timeString, Font_16x26, ST7735_CYAN, ST7735_BLACK);
+    ST7735_DrawString(40 + 50, 70, timeString, Font_16x26, ST7735_WHITE, ST7735_BLACK);
 }
 
 void update_progress_bar(int completion_percentage)
@@ -569,39 +569,36 @@ void eyes_sad_blink()
     case 0:
         ST7735_DrawImage(45, 10, 72, 44, (uint16_t *)image[0]);
         break;
-    case 41:
+    case 1:
         ST7735_DrawImage(45, 10, 72, 44, (uint16_t *)image[6]);
         break;
-    case 42:
+    case 2:
         ST7735_DrawImage(45, 10, 72, 44, (uint16_t *)image[7]);
         break;
-    case 44:
+    case 3:
         ST7735_DrawImage(45, 10, 72, 44, (uint16_t *)image[8]);
         break;
-    case 45:
+    case 4:
         ST7735_DrawImage(45, 10, 72, 44, (uint16_t *)image[9]);
         break;
-    case 46:
+    case 5:
         ST7735_DrawImage(45, 10, 72, 44, (uint16_t *)image[10]);
         break;
-    case 87:
-        ST7735_DrawImage(45, 10, 72, 44, (uint16_t *)image[9]);
+    case 48:
+        ST7735_DrawImage(45, 10, 72, 44, (uint16_t *)image[11]);
         break;
-    case 88:
-        ST7735_DrawImage(45, 10, 72, 44, (uint16_t *)image[8]);
+    case 49:
+        ST7735_DrawImage(45, 10, 72, 44, (uint16_t *)image[12]);
         break;
-    case 89:
-        ST7735_DrawImage(45, 10, 72, 44, (uint16_t *)image[7]);
-        break;
-    case 90:
-        ST7735_DrawImage(45, 10, 72, 44, (uint16_t *)image[6]);
+    case 50:
+        ST7735_DrawImage(45, 10, 72, 44, (uint16_t *)image[11]);
         break;
     default:
         break;
     }
     sad_fps++;
-    if (sad_fps > 90)
-        sad_fps = 0;
+    if (sad_fps > 50)
+        sad_fps = 5;
 }
 
 void eyes_happy_blink()
@@ -617,39 +614,33 @@ void eyes_happy_blink()
     case 0:
         ST7735_DrawImage(45, 10, 72, 44, (uint16_t *)image[0]);
         break;
-    case 41:
-        ST7735_DrawImage(45, 10, 72, 44, (uint16_t *)image[11]);
-        break;
-    case 42:
-        ST7735_DrawImage(45, 10, 72, 44, (uint16_t *)image[12]);
-        break;
-    case 44:
+    case 1:
         ST7735_DrawImage(45, 10, 72, 44, (uint16_t *)image[13]);
         break;
-    case 45:
+    case 2:
         ST7735_DrawImage(45, 10, 72, 44, (uint16_t *)image[14]);
         break;
-    case 46:
+    case 3:
         ST7735_DrawImage(45, 10, 72, 44, (uint16_t *)image[15]);
         break;
-    case 87:
-        ST7735_DrawImage(45, 10, 72, 44, (uint16_t *)image[14]);
+    case 4:
+        ST7735_DrawImage(45, 10, 72, 44, (uint16_t *)image[16]);
         break;
-    case 88:
-        ST7735_DrawImage(45, 10, 72, 44, (uint16_t *)image[13]);
+    case 48:
+        ST7735_DrawImage(45, 10, 72, 44, (uint16_t *)image[17]);
         break;
-    case 89:
-        ST7735_DrawImage(45, 10, 72, 44, (uint16_t *)image[12]);
+    case 49:
+        ST7735_DrawImage(45, 10, 72, 44, (uint16_t *)image[18]);
         break;
-    case 90:
-        ST7735_DrawImage(45, 10, 72, 44, (uint16_t *)image[11]);
+    case 50:
+        ST7735_DrawImage(45, 10, 72, 44, (uint16_t *)image[17]);
         break;
     default:
         break;
     }
     happy_fps++;
-    if (happy_fps > 90)
-        happy_fps = 0;
+    if (happy_fps > 50)
+        happy_fps = 4;
 }
 
 void angry_face()
