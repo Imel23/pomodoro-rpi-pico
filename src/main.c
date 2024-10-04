@@ -2,6 +2,7 @@
 #include "pico/stdlib.h"
 #include "state_machine.h"
 #include "user_interface.h"
+#include "simon_game.h"
 
 #define rot 3
 
@@ -37,6 +38,9 @@ int main()
             break;
         case TASKS_DONE:
             tasks_done_state();
+            break;
+        case GAME:
+            simon_game_state();
             break;
         default:
             break;

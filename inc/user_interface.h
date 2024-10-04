@@ -18,10 +18,11 @@
 // Menu items with associated Y positions
 typedef enum menu_items
 {
-    SESSIONS_Y = 40,
-    WORKDURATION_Y = 60,
+    SESSIONS_Y = 50,
+    WORKDURATION_Y = 65,
     SHORTDURATION_Y = 80,
-    LONGBREAK_Y = 100
+    LONGBREAK_Y = 95,
+    PLAY_Y = 110
 } menu_items;
 
 typedef enum faces
@@ -130,5 +131,15 @@ void eyes_sad_blink();
 void eyes_happy_blink();
 void angry_face();
 void stars_face();
+
+void simon_game_view();
+void simon_game_yellow_off();
+void simon_game_blue_off();
+void simon_game_red_off();
+void simon_game_green_off();
+void simon_game_yellow();
+void simon_game_blue();
+void simon_game_red();
+void simon_game_green();
 
 #endif // USER_INTERFACE_H

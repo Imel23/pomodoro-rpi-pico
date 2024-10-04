@@ -128,11 +128,15 @@
 // Color definitions
 #define ST7735_BLACK 0x0000
 #define ST7735_BLUE 0x001F
+#define ST7735_BLUE_OFF 0x000F
 #define ST7735_RED 0xF800
+#define ST7735_RED_OFF 0x7800
 #define ST7735_GREEN 0x07E0
+#define ST7735_GREEN_OFF 0x03E0
 #define ST7735_CYAN 0x07FF
 #define ST7735_MAGENTA 0xF81F
 #define ST7735_YELLOW 0xFFE0
+#define ST7735_YELLOW_OFF 0x7BE0
 #define ST7735_WHITE 0xFFFF
 
 void ST7735_Backlight_On(void);
