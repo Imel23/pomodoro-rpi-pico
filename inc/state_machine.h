@@ -1,7 +1,7 @@
-// main.h
+// STATE_MACHINE_H
 
-#ifndef MAIN_H
-#define MAIN_H
+#ifndef STATE_MACHINE_H
+#define STATE_MACHINE_H
 
 #include "timer_.h"
 
@@ -29,6 +29,8 @@ typedef enum
 } pomodoro_e;
 
 #define rot 3
+
+extern pomodoro_e state;
 
 void __init();
 
