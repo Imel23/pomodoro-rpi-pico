@@ -98,35 +98,3 @@ void buttons_callback(uint gpio, uint32_t events)
     }
     // sleep_ms(250);
 }
-/*
-bool check_button_press(uint8_t button)
-{
-    static bool button_was_pressed[NUM_BUTTONS] = {false};
-    static uint64_t last_debounce_time[NUM_BUTTONS] = {0};
-
-    int index = get_button_index(button);
-    if (index == -1)
-    {
-        // Handle error: button not recognized
-        return false;
-    }
-
-    uint64_t current_time = to_ms_since_boot(get_absolute_time());
-    bool button_state = gpio_get(button);
-
-    if (button_state == 0 && !button_was_pressed[index] &&
-        (current_time - last_debounce_time[index]) > DEBOUNCE_DELAY)
-    {
-        button_was_pressed[index] = true;
-        last_debounce_time[index] = current_time;
-        return true;
-    }
-
-    if (button_state == 1)
-    {
-        button_was_pressed[index] = false;
-    }
-
-    return false;
-}
-*/

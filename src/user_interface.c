@@ -36,7 +36,10 @@ void home_view(time_s *time)
 {
     // Clear the screen and draw the initial view
     ST7735_FillScreen(ST7735_BLACK);
-    ST7735_DrawString(8, 110, "WORK", Font_7x10, ST7735_CYAN, ST7735_BLACK);
+    if (work)
+        ST7735_DrawString(115, 110, "WORK", Font_7x10, ST7735_CYAN, ST7735_BLACK);
+    else
+        ST7735_DrawString(115, 110, "BREAK", Font_7x10, ST7735_YELLOW, ST7735_BLACK);
 
     // Draw session indicator
     char session_indicator[5];
@@ -44,7 +47,7 @@ void home_view(time_s *time)
     ST7735_DrawString(60, 110, session_indicator, Font_7x10, ST7735_CYAN, ST7735_BLACK);
 
     // Initially, draw "START" at the beginning
-    ST7735_DrawString(115, 110, "START", Font_7x10, ST7735_CYAN, ST7735_BLACK);
+    ST7735_DrawString(8, 110, "START", Font_7x10, ST7735_CYAN, ST7735_BLACK);
 
     update_minutes(time->currentMinute);
     update_seconds(time->currentSecond);
@@ -56,8 +59,8 @@ void update_pause_resume_display(bool *startWork)
     *startWork = !*startWork;
     const char *button_text = *startWork ? "PAUSE" : "RESUME";
     // Clear the previous text by overwriting it with the background color (black)
-    ST7735_FillRectangle(115, 110, 48, 10, ST7735_BLACK);
-    ST7735_DrawString(115, 110, button_text, Font_7x10, ST7735_CYAN, ST7735_BLACK);
+    ST7735_FillRectangle(8, 110, 48, 10, ST7735_BLACK);
+    ST7735_DrawString(8, 110, button_text, Font_7x10, ST7735_CYAN, ST7735_BLACK);
 }
 
 bool update_time(time_s *time, uint32_t *percentage, bool *work_ptr)
@@ -90,8 +93,8 @@ bool update_time(time_s *time, uint32_t *percentage, bool *work_ptr)
             time->currentMinute = time->workDuration;
             time->currentSecond = 0;
 
-            ST7735_FillRectangle(8, 110, 40, 20, ST7735_BLACK);
-            ST7735_DrawString(8, 110, "WORK", Font_7x10, ST7735_CYAN, ST7735_BLACK);
+            ST7735_FillRectangle(115, 110, 40, 20, ST7735_BLACK);
+            ST7735_DrawString(115, 110, "WORK", Font_7x10, ST7735_CYAN, ST7735_BLACK);
 
             time->currentSession++;
             char session_indicator[2];
@@ -101,8 +104,8 @@ bool update_time(time_s *time, uint32_t *percentage, bool *work_ptr)
         }
         else
         {
-            ST7735_FillRectangle(8, 110, 40, 20, ST7735_BLACK);
-            ST7735_DrawString(8, 110, "BREAK", Font_7x10, ST7735_YELLOW, ST7735_BLACK);
+            ST7735_FillRectangle(115, 110, 40, 20, ST7735_BLACK);
+            ST7735_DrawString(115, 110, "BREAK", Font_7x10, ST7735_YELLOW, ST7735_BLACK);
             if (time->currentSession % 4 == 0)
             {
                 progress_bar_time = time->longBreak;
@@ -177,7 +180,7 @@ void update_progress_bar(int completion_percentage)
 /*########################### Settings Interface ###########################*/
 
 // Array defining the menu order
-menu_items menu_items_array[] = {SESSIONS_Y, WORKDURATION_Y, SHORTDURATION_Y, LONGBREAK_Y};
+menu_items menu_items_array[] = {SESSIONS_Y, WORKDURATION_Y, SHORTDURATION_Y, LONGBREAK_Y, PLAY_Y};
 #define MENU_ITEM_COUNT (sizeof(menu_items_array) / sizeof(menu_items_array[0]))
 
 uint8_t previous_selection_index = 0; // Keep track of the previous selection
@@ -191,11 +194,11 @@ void settings_view()
     ST7735_FillScreen(ST7735_BLACK);
     ST7735_DrawString(30, 8, "Settings", Font_11x18, ST7735_CYAN, ST7735_BLACK);
     ST7735_DrawLineThick(30, 30, 120, 30, ST7735_MAGENTA, 2);
-    ST7735_DrawString(12, 40, "Sessions", Font_7x10, ST7735_WHITE, ST7735_BLACK);
-    ST7735_DrawString(12, 60, "Work Duration", Font_7x10, ST7735_WHITE, ST7735_BLACK);
+    ST7735_DrawString(12, 50, "Tasks", Font_7x10, ST7735_WHITE, ST7735_BLACK);
+    ST7735_DrawString(12, 65, "Work Duration", Font_7x10, ST7735_WHITE, ST7735_BLACK);
     ST7735_DrawString(12, 80, "Short Break", Font_7x10, ST7735_WHITE, ST7735_BLACK);
-    ST7735_DrawString(12, 100, "Long Break", Font_7x10, ST7735_WHITE, ST7735_BLACK);
-
+    ST7735_DrawString(12, 95, "Long Break", Font_7x10, ST7735_WHITE, ST7735_BLACK);
+    ST7735_DrawString(12, 110, "Play", Font_7x10, ST7735_WHITE, ST7735_BLACK);
     selection_arrow(menu_items_array[previous_selection_index], menu_items_array[current_selection_index]);
 }
 
@@ -256,8 +259,8 @@ void sessions_view(time_s *time)
 
     // Draw static elements
     ST7735_FillScreen(ST7735_BLACK);
-    ST7735_DrawString(30, 16, "Sessions", Font_11x18, ST7735_CYAN, ST7735_BLACK);
-    ST7735_DrawLineThick(30, 35, 120, 35, ST7735_MAGENTA, 2);
+    ST7735_DrawString(50, 16, "Tasks", Font_11x18, ST7735_CYAN, ST7735_BLACK);
+    ST7735_DrawLineThick(50, 35, 110, 35, ST7735_MAGENTA, 2);
     ST7735_DrawString(130, 110, "[+]", Font_7x10, ST7735_WHITE, ST7735_BLACK);
     ST7735_DrawString(10, 110, "[-]", Font_7x10, ST7735_WHITE, ST7735_BLACK);
     ST7735_DrawString(60, 60, sessionNumber, Font_11x18, ST7735_WHITE, ST7735_BLACK);
@@ -493,7 +496,7 @@ void tasks_done_view()
     ST7735_DrawString(30, 60, "Congrats", Font_11x18, ST7735_WHITE, ST7735_BLACK);
 }
 
-/*################################################################################*/
+/*########################### EYES EXPRESSIONS #################################*/
 
 uint8_t blink_fps = 0;
 uint8_t sad_fps = 0;
@@ -563,6 +566,11 @@ void eyes_sad_blink()
         angry_face();
         return;
     }
+    else if (face == STARS)
+    {
+        stars_face();
+        return;
+    }
 
     switch (sad_fps)
     {
@@ -606,6 +614,11 @@ void eyes_happy_blink()
     if (face == ANGRY)
     {
         angry_face();
+        return;
+    }
+    else if (face == STARS)
+    {
+        stars_face();
         return;
     }
 
@@ -722,4 +735,57 @@ void stars_face()
             face = EYES;
         }
     }
+}
+
+/*########################### SIMON GAME #################################*/
+
+void simon_game_view()
+{
+    // Draw static elements
+    ST7735_FillScreen(ST7735_BLACK);
+
+    ST7735_DrawCircle(20, 65, 15, ST7735_CYAN);
+    simon_game_yellow_off();
+
+    ST7735_DrawCircle(60, 65, 15, ST7735_CYAN);
+    simon_game_blue_off();
+
+    ST7735_DrawCircle(100, 65, 15, ST7735_CYAN);
+    simon_game_red_off();
+
+    ST7735_DrawCircle(140, 65, 15, ST7735_CYAN);
+    simon_game_green_off();
+}
+
+void simon_game_yellow_off()
+{
+    ST7735_FillCircle(20, 65, 14, ST7735_YELLOW_OFF);
+}
+void simon_game_blue_off()
+{
+    ST7735_FillCircle(60, 65, 14, ST7735_BLUE_OFF);
+}
+void simon_game_red_off()
+{
+    ST7735_FillCircle(100, 65, 14, ST7735_RED_OFF);
+}
+void simon_game_green_off()
+{
+    ST7735_FillCircle(140, 65, 14, ST7735_GREEN_OFF);
+}
+void simon_game_yellow()
+{
+    ST7735_FillCircle(20, 65, 14, ST7735_YELLOW);
+}
+void simon_game_blue()
+{
+    ST7735_FillCircle(60, 65, 14, ST7735_BLUE);
+}
+void simon_game_red()
+{
+    ST7735_FillCircle(100, 65, 14, ST7735_RED);
+}
+void simon_game_green()
+{
+    ST7735_FillCircle(140, 65, 14, ST7735_GREEN);
 }

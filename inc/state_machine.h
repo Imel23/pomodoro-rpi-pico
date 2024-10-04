@@ -25,7 +25,8 @@ typedef enum
     WORKDURATION,
     SHORTBREAK,
     LONGBREAK,
-    TASKS_DONE
+    TASKS_DONE,
+    GAME
 } pomodoro_e;
 
 #define rot 3
@@ -41,5 +42,6 @@ void work_duration_state();
 void short_break_state();
 void long_break_state();
 void tasks_done_state();
+void simon_game_state();
 
 #endif

@@ -4,6 +4,7 @@
 #include "state_machine.h"
 #include "buttons_handler.h"
 #include "timer_.h"
+#include "simon_game.h"
 
 #define SECOND 100000
 
@@ -125,6 +126,10 @@ void settings_state()
             break;
         case 3:
             state = LONGBREAK;
+            intializeView = true;
+            break;
+        case 4:
+            state = GAME;
             intializeView = true;
             break;
         default:
@@ -294,5 +299,34 @@ void tasks_done_state()
     if (is_decrease_pressed)
     {
         is_decrease_pressed = false;
+    }
+}
+
+void simon_game_state()
+{
+    if (intializeView)
+    {
+        simon_game_view();
+        intializeView = false;
+    }
+
+    simon_game();
+
+    if (simon_state == IDLE_S)
+    {
+        if (is_settings_pressed)
+        {
+            is_settings_pressed = false;
+            state = HOME;
+            intializeView = true;
+        }
+        if (is_increase_pressed)
+        {
+            is_increase_pressed = false;
+        }
+        if (is_decrease_pressed)
+        {
+            is_decrease_pressed = false;
+        }
     }
 }
