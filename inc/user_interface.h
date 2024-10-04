@@ -9,7 +9,7 @@
 #include "st7735.h"
 #include "fonts.h"
 #include "buttons_handler.h"
-#include "main.h"
+#include "state_machine.h"
 
 // Screen dimensions and layout constants
 #define SCREEN_WIDTH 128
