@@ -3,6 +3,7 @@
 #include "state_machine.h"
 #include "user_interface.h"
 #include "simon_game.h"
+#include "mastermind.h"
 
 #define rot 3
 
@@ -13,38 +14,39 @@ int main()
     __init();
 
     ST7735_SetRotation(rot);
+
     while (true)
     {
-        switch (state)
-        {
-        case HOME:
-            home_state();
-            break;
-        case SETTINGS:
-            settings_state();
-            break;
-        case SESSIONS:
-            sessions_state();
-            break;
-        case WORKDURATION:
-            work_duration_state();
-            break;
-        case SHORTBREAK:
-            short_break_state();
-            break;
-        case LONGBREAK:
-            long_break_state();
-            break;
-        case TASKS_DONE:
-            tasks_done_state();
-            break;
-        case GAME:
-            simon_game_state();
-            break;
-        default:
-            break;
-        }
-
+        // switch (state)
+        // {
+        // case HOME:
+        //     home_state();
+        //     break;
+        // case SETTINGS:
+        //     settings_state();
+        //     break;
+        // case SESSIONS:
+        //     sessions_state();
+        //     break;
+        // case WORKDURATION:
+        //     work_duration_state();
+        //     break;
+        // case SHORTBREAK:
+        //     short_break_state();
+        //     break;
+        // case LONGBREAK:
+        //     long_break_state();
+        //     break;
+        // case TASKS_DONE:
+        //     tasks_done_state();
+        //     break;
+        // case GAME:
+        //     simon_game_state();
+        //     break;
+        // default:
+        //     break;
+        // }
+        mastermind_game_logic();
         sleep_ms(33);
     }
 
