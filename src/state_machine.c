@@ -5,10 +5,11 @@
 #include "buttons_handler.h"
 #include "timer_.h"
 #include "simon_game.h"
+#include "flash.h"
 
 #define SECOND 100000
 
-time_s time = {5, 2, 1, 2, 2, 0, 1};
+time_s time;
 pomodoro_e state = HOME;
 
 bool startWork = false;
@@ -16,9 +17,17 @@ bool intializeView = true;
 uint8_t idx = 0;
 uint32_t percentage = 0;
 bool work = true;
-
+bool firstPowerOn = true;
 void home_state()
 {
+    if (firstPowerOn)
+    {
+        flash_read(&time);
+        time.currentMinute = time.workDuration;
+        time.currentSecond = 0;
+        time.currentSession = 1;
+        firstPowerOn = false;
+    }
     if (intializeView)
     {
         home_view(&time);
@@ -150,6 +159,7 @@ void sessions_state()
         is_start_pause_pressed = false;
         state = SETTINGS;
         update_sessions(&time);
+        flash_write(&time);
         intializeView = true;
     }
 
@@ -184,6 +194,7 @@ void work_duration_state()
         is_start_pause_pressed = false;
         state = SETTINGS;
         update_work_duration(&time);
+        flash_write(&time);
         intializeView = true;
     }
 
@@ -218,6 +229,7 @@ void short_break_state()
         is_start_pause_pressed = false;
         state = SETTINGS;
         short_break_duration(&time);
+        flash_write(&time);
         intializeView = true;
     }
 
@@ -252,6 +264,7 @@ void long_break_state()
         is_start_pause_pressed = false;
         state = SETTINGS;
         long_break_duration(&time);
+        flash_write(&time);
         intializeView = true;
     }
 

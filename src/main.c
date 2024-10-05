@@ -13,7 +13,6 @@ int main()
     __init();
 
     ST7735_SetRotation(rot);
-
     while (true)
     {
         switch (state)

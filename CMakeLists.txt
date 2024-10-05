@@ -23,6 +23,7 @@ add_executable(Pomodoro
     src/buttons_handler.c
     src/state_machine.c
     src/simon_game.c
+    src/flash.c
 )
 
 pico_enable_stdio_usb(Pomodoro 1)

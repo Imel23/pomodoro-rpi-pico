@@ -5,7 +5,6 @@
 
 #include "timer_.h"
 
-#define SECOND 100000
 typedef struct
 {
     uint8_t sessions;
