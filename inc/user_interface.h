@@ -141,5 +141,5 @@ void simon_game_yellow();
 void simon_game_blue();
 void simon_game_red();
 void simon_game_green();
-
+void games_view();
 #endif // USER_INTERFACE_H

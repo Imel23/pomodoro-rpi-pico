@@ -1,8 +1,11 @@
 #include "mastermind.h"
+#include <stdio.h>
 
 /*########################### MASTERMIND GAME STATE #################################*/
 
-static GameState game_state;
+GameState game_state;
+uint8_t history_x[4] = {135, 140, 145, 150};
+uint8_t history_y = 10;
 
 /*########################### MASTERMIND GAME LOGIC #################################*/
 
@@ -10,10 +13,10 @@ void generate_secret_sequence(void)
 {
     // Seed the random number generator if necessary
     // srand((unsigned int)time(NULL)); // Uncomment if time function is available
-
+    srand(to_us_since_boot(get_absolute_time()));
     for (int i = 0; i < MAX_SEQUENCE_LENGTH; i++)
     {
-        game_state.secret_sequence[i] = rand() % NUM_COLORS;
+        game_state.secret_sequence[i] = rand() % NUM_COLORS + 1;
     }
 }
 
@@ -60,8 +63,6 @@ void provide_feedback(void)
             }
         }
     }
-
-    display_feedback(game_state.correct_color_and_position, game_state.correct_color_wrong_position, MAX_ATTEMPTS - game_state.attempts);
 }
 
 void check_game_status(void)
@@ -81,6 +82,8 @@ void check_game_status(void)
         }
         else
         {
+            display_feedback(game_state.correct_color_and_position, game_state.correct_color_wrong_position, MAX_ATTEMPTS - game_state.attempts);
+            display_history();
             game_state.current_guess_index = 0; // Reset for the next guess
         }
     }
@@ -96,90 +99,83 @@ void reset_game(void)
 
 void mastermind_game_logic(void)
 {
-    reset_game();
-    game_state.first_run = true; // Game just started
 
-    mastermind_init_view(); // Display initial screen asking to press START
-
-    while (true)
+    if (game_state.first_run)
     {
-        if (game_state.first_run)
+        // Waiting for the player to press 'START' to display instructions
+        if (is_start_pause_pressed)
         {
-            // Waiting for the player to press 'START' to display instructions
+            is_start_pause_pressed = false;
+            game_state.first_run = false;
+            mastermind_display_instructions(); // Display instructions and prompt to press START again
+        }
+    }
+    else if (game_state.waiting_to_start)
+    {
+        // Waiting for the player to press 'START' to begin the game
+        if (is_start_pause_pressed)
+        {
+            is_start_pause_pressed = false;
+            game_state.waiting_to_start = false;
+            mastermind_game_display(); // Display game screen
+            generate_secret_sequence();
+            display_feedback(game_state.correct_color_and_position, game_state.correct_color_wrong_position, MAX_ATTEMPTS - game_state.attempts);
+        }
+    }
+    else if (!game_state.game_over)
+    {
+        // Game is in progress
+        if (game_state.current_guess_index < MAX_SEQUENCE_LENGTH)
+        {
+            // Process color selection buttons
+            if (is_settings_pressed)
+            {
+                is_settings_pressed = false;
+                handle_button_press(GREEN);
+            }
+            if (is_increase_pressed)
+            {
+                is_increase_pressed = false;
+                handle_button_press(RED);
+            }
+            if (is_decrease_pressed)
+            {
+                is_decrease_pressed = false;
+                handle_button_press(BLUE);
+            }
             if (is_start_pause_pressed)
             {
                 is_start_pause_pressed = false;
-                game_state.first_run = false;
-                mastermind_display_instructions(); // Display instructions and prompt to press START again
-            }
-        }
-        else if (game_state.waiting_to_start)
-        {
-            // Waiting for the player to press 'START' to begin the game
-            if (is_start_pause_pressed)
-            {
-                is_start_pause_pressed = false;
-                game_state.waiting_to_start = false;
-                mastermind_game_display(); // Display game screen
-                generate_secret_sequence();
-            }
-        }
-        else if (!game_state.game_over)
-        {
-            // Game is in progress
-            if (game_state.current_guess_index < MAX_SEQUENCE_LENGTH)
-            {
-                // Process color selection buttons
-                if (is_settings_pressed)
-                {
-                    is_settings_pressed = false;
-                    handle_button_press(RED);
-                }
-                if (is_increase_pressed)
-                {
-                    is_increase_pressed = false;
-                    handle_button_press(GREEN);
-                }
-                if (is_decrease_pressed)
-                {
-                    is_decrease_pressed = false;
-                    handle_button_press(BLUE);
-                }
-                if (is_start_pause_pressed)
-                {
-                    is_start_pause_pressed = false;
-                    handle_button_press(YELLOW);
-                }
-            }
-            else
-            {
-                // Guess is complete, wait for 'START' button to submit guess
-                if (is_start_pause_pressed)
-                {
-                    is_start_pause_pressed = false;
-                    provide_feedback();
-                    check_game_status();
-
-                    if (!game_state.game_over)
-                    {
-                        clear_guess_display(); // Clear circles after submitting the guess
-                    }
-                }
+                handle_button_press(YELLOW);
             }
         }
         else
         {
-            // Game over, wait for 'START' button to reset
+            // Guess is complete, wait for 'START' button to submit guess
             if (is_start_pause_pressed)
             {
                 is_start_pause_pressed = false;
-                reset_game();
-                game_state.first_run = true; // Reset to initial state
-                mastermind_init_view();      // Display initial screen asking to press START
+                provide_feedback();
+                check_game_status();
+
+                if (!game_state.game_over)
+                {
+                    clear_guess_display(); // Clear circles after submitting the guess
+                }
             }
         }
-
-        sleep_ms(10); // Small delay to prevent busy-waiting
+    }
+    else
+    {
+        // Game over, wait for 'START' button to reset
+        if (is_start_pause_pressed)
+        {
+            is_start_pause_pressed = false;
+            reset_game();
+            history_y = 10;
+            game_state.first_run = true; // Reset to initial state
+            mastermind_init_view();      // Display initial screen asking to press START
+        }
     }
 }
 
@@ -187,21 +183,24 @@ void mastermind_game_logic(void)
 
 void mastermind_init_view(void)
 {
+    reset_game();
+    game_state.first_run = true; // Game just started
+
     ST7735_FillScreen(ST7735_BLACK);
 
     // Center "Mastermind" title
     const char *title = "Mastermind";
     int title_width = strlen(title) * 11; // Assuming Font_11x18 is 11 pixels wide
-    int title_x = (SCREEN_WIDTH - title_width) / 2;
-    ST7735_DrawString(title_x, 30, title, Font_11x18, ST7735_CYAN, ST7735_BLACK);
+    int title_x = (WIDTH - title_width) / 2;
+    ST7735_DrawString(title_x + 10, 30, title, Font_11x18, ST7735_CYAN, ST7735_BLACK);
 
     // Draw a decorative line under the title
-    ST7735_DrawLineThick(20, 55, SCREEN_WIDTH - 20, 55, ST7735_MAGENTA, 2);
+    ST7735_DrawLineThick(25, 55, 130, 55, ST7735_MAGENTA, 2);
 
     // Center "Press START to begin" prompt
     const char *prompt = "Press START to begin";
     int prompt_width = strlen(prompt) * 6; // Assuming Font_7x10 is 6 pixels wide
-    int prompt_x = (SCREEN_WIDTH - prompt_width) / 2;
+    int prompt_x = (WIDTH - prompt_width) / 2;
     ST7735_DrawString(prompt_x, 80, prompt, Font_7x10, ST7735_YELLOW, ST7735_BLACK);
 }
 
@@ -218,11 +217,11 @@ void mastermind_display_instructions(void)
         "Use buttons to select",
         "Press START to begin"};
 
-    int start_y = 10;
+    int start_y = 15;
     for (int i = 0; i < 6; i++)
     {
         int text_width = strlen(instructions[i]) * 6; // Assuming Font_7x10
-        int text_x = (SCREEN_WIDTH - text_width) / 2;
+        int text_x = (WIDTH - text_width) / 2;
         ST7735_DrawString(text_x, start_y + i * 15, instructions[i], Font_7x10, ST7735_WHITE, ST7735_BLACK);
     }
 }
@@ -232,10 +231,10 @@ void mastermind_game_display(void)
     ST7735_FillScreen(ST7735_BLACK);
 
     // Draw 4 empty circles for color selection
-    int circle_y = SCREEN_HEIGHT / 2; // Centered vertically
+    int circle_y = HEIGHT / 2 + 10; // Centered vertically
     int circle_radius = 10;
     int total_width = MAX_SEQUENCE_LENGTH * (2 * circle_radius) + (MAX_SEQUENCE_LENGTH - 1) * 10;
-    int start_x = (SCREEN_WIDTH - total_width) / 2;
+    int start_x = (WIDTH - total_width) / 2;
 
     for (int i = 0; i < MAX_SEQUENCE_LENGTH; i++)
     {
@@ -244,19 +243,21 @@ void mastermind_game_display(void)
     }
 
     // Draw feedback area at the bottom
-    ST7735_DrawRect(10, SCREEN_HEIGHT - 30, SCREEN_WIDTH - 20, 20, ST7735_CYAN);
-    const char *feedback_text = "Feedback";
+    ST7735_DrawRect(10, HEIGHT - 30, WIDTH - 20, 20, ST7735_CYAN);
+    const char *feedback_text = "Mastermind";
     int feedback_width = strlen(feedback_text) * 6; // Assuming Font_7x10
-    int feedback_x = (SCREEN_WIDTH - feedback_width) / 2;
-    ST7735_DrawString(feedback_x, SCREEN_HEIGHT - 25, feedback_text, Font_7x10, ST7735_BLACK, ST7735_CYAN);
+    int feedback_x = (WIDTH - feedback_width) / 2;
+    ST7735_DrawString(feedback_x, HEIGHT - 25, feedback_text, Font_7x10, ST7735_BLACK, ST7735_CYAN);
+
+    ST7735_DrawLineThick(130, 0, 130, 128, ST7735_CYAN, 2);
 }
 
 void display_guess(void)
 {
-    int circle_y = SCREEN_HEIGHT / 2; // Centered vertically
+    int circle_y = HEIGHT / 2 + 10; // Centered vertically
     int circle_radius = 10;
     int total_width = MAX_SEQUENCE_LENGTH * (2 * circle_radius) + (MAX_SEQUENCE_LENGTH - 1) * 10;
-    int start_x = (SCREEN_WIDTH - total_width) / 2;
+    int start_x = (WIDTH - total_width) / 2;
 
     for (int i = 0; i < game_state.current_guess_index; i++)
     {
@@ -284,12 +285,41 @@ void display_guess(void)
     }
 }
 
+void display_history(void)
+{
+
+    for (int i = 0; i < game_state.current_guess_index; i++)
+    {
+        uint16_t color;
+        switch (game_state.guess_sequence[i])
+        {
+        case RED:
+            color = ST7735_RED;
+            break;
+        case GREEN:
+            color = ST7735_GREEN;
+            break;
+        case BLUE:
+            color = ST7735_BLUE;
+            break;
+        case YELLOW:
+            color = ST7735_YELLOW;
+            break;
+        default:
+            color = ST7735_WHITE;
+            break;
+        }
+        ST7735_DrawFastVLine(history_x[i], history_y, 5, color);
+    }
+    history_y += 10;
+}
+
 void clear_guess_display(void)
 {
-    int circle_y = SCREEN_HEIGHT / 2; // Centered vertically
+    int circle_y = HEIGHT / 2 + 10; // Centered vertically
     int circle_radius = 10;
     int total_width = MAX_SEQUENCE_LENGTH * (2 * circle_radius) + (MAX_SEQUENCE_LENGTH - 1) * 10;
-    int start_x = (SCREEN_WIDTH - total_width) / 2;
+    int start_x = (WIDTH - total_width) / 2;
 
     for (int i = 0; i < MAX_SEQUENCE_LENGTH; i++)
     {
@@ -306,14 +336,18 @@ void display_feedback(int correct_position, int correct_color, int remaining_att
 {
     char feedback[30];
     char remaining_attempts_str[20];
-    snprintf(feedback, sizeof(feedback), "Position: %d  Color: %d", correct_position, correct_color);
-    ST7735_FillRectangle(5, 30, SCREEN_WIDTH - 10, 20, ST7735_BLACK); // Clear previous feedback
+    snprintf(feedback, sizeof(feedback), "Position: %d", correct_position);
+    ST7735_FillRectangle(5, 30, WIDTH - 30, 20, ST7735_BLACK); // Clear previous feedback
     ST7735_DrawString(5, 30, feedback, Font_7x10, ST7735_WHITE, ST7735_BLACK);
 
-    snprintf(remaining_attempts_str, sizeof(remaining_attempts_str), "Remaining tries: %d", remaining_attempts);
+    snprintf(feedback, sizeof(feedback), "Color: %d", correct_color);
+    ST7735_FillRectangle(5, 45, WIDTH - 30, 20, ST7735_BLACK); // Clear previous feedback
+    ST7735_DrawString(5, 45, feedback, Font_7x10, ST7735_WHITE, ST7735_BLACK);
+
+    snprintf(remaining_attempts_str, sizeof(remaining_attempts_str), "Tries: %d", remaining_attempts);
     int text_width = strlen(remaining_attempts_str) * 8;
-    ST7735_FillRectangle(5, 50, text_width, 10, ST7735_BLACK); // Clear only the necessary area
-    ST7735_DrawString(5, 50, remaining_attempts_str, Font_7x10, ST7735_RED, ST7735_BLACK);
+    ST7735_FillRectangle(5, 60, text_width, 10, ST7735_BLACK); // Clear only the necessary area
+    ST7735_DrawString(5, 60, remaining_attempts_str, Font_7x10, ST7735_RED, ST7735_BLACK);
 }
 
 void display_victory_message(void)
@@ -321,8 +355,8 @@ void display_victory_message(void)
     ST7735_FillScreen(ST7735_BLACK);
     const char *message = "You Win!";
     int message_width = strlen(message) * 11; // Assuming Font_11x18
-    int message_x = (SCREEN_WIDTH - message_width) / 2;
-    ST7735_DrawString(message_x, SCREEN_HEIGHT / 2 - 9, message, Font_11x18, ST7735_GREEN, ST7735_BLACK); // Adjusted to center vertically
+    int message_x = (WIDTH - message_width) / 2;
+    ST7735_DrawString(message_x, HEIGHT / 2 - 9, message, Font_11x18, ST7735_GREEN, ST7735_BLACK); // Adjusted to center vertically
 }
 
 void display_failure_message(void)
@@ -330,19 +364,19 @@ void display_failure_message(void)
     ST7735_FillScreen(ST7735_BLACK);
     const char *message = "Game Over";
     int message_width = strlen(message) * 11; // Assuming Font_11x18
-    int message_x = (SCREEN_WIDTH - message_width) / 2;
-    ST7735_DrawString(message_x, SCREEN_HEIGHT / 2 - 50, message, Font_11x18, ST7735_RED, ST7735_BLACK);
+    int message_x = (WIDTH - message_width) / 2;
+    ST7735_DrawString(message_x, HEIGHT / 2 - 50, message, Font_11x18, ST7735_RED, ST7735_BLACK);
 
     // Display the secret sequence
     const char *secret_msg = "Secret:";
     int secret_msg_width = strlen(secret_msg) * 6;
-    int secret_msg_x = (SCREEN_WIDTH - secret_msg_width) / 2;
-    ST7735_DrawString(secret_msg_x, SCREEN_HEIGHT / 2 - 20, secret_msg, Font_7x10, ST7735_WHITE, ST7735_BLACK); // Adjusted vertical position
+    int secret_msg_x = (WIDTH - secret_msg_width) / 2;
+    ST7735_DrawString(secret_msg_x, HEIGHT / 2 - 20, secret_msg, Font_7x10, ST7735_WHITE, ST7735_BLACK); // Adjusted vertical position
 
-    int circle_y = SCREEN_HEIGHT / 2 + 10;
+    int circle_y = HEIGHT / 2 + 10;
     int circle_radius = 10;
     int total_width = MAX_SEQUENCE_LENGTH * (2 * circle_radius) + (MAX_SEQUENCE_LENGTH - 1) * 10;
-    int start_x = (SCREEN_WIDTH - total_width) / 2;
+    int start_x = (WIDTH - total_width) / 2;
 
     for (int i = 0; i < MAX_SEQUENCE_LENGTH; i++)
     {
