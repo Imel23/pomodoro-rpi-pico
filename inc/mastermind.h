@@ -18,13 +18,13 @@
 
 // Define color codes
 #define RED 1
-#define GREEN 0
-#define BLUE 2
-#define YELLOW 3
+#define GREEN 2
+#define BLUE 3
+#define YELLOW 4
 
 // Screen dimensions and layout constants
-#define SCREEN_WIDTH 128
-#define SCREEN_HEIGHT 160
+#define WIDTH 128
+#define HEIGHT 160
 
 /*########################### MASTERMIND GAME STATE #################################*/
 
@@ -58,5 +58,6 @@ void display_victory_message(void);
 void display_failure_message(void);
 void mastermind_display_instructions(void);
 void clear_guess_display(void);
+void display_history(void);
 
 #endif // MASTERMIND_H

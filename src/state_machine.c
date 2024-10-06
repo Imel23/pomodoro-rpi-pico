@@ -350,7 +350,8 @@ void simon_game_state()
 {
     if (intializeView)
     {
-        simon_game_view();
+        // simon_game_view();
+        idle_first_time = true;
         intializeView = false;
     }
 
