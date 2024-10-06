@@ -6,6 +6,7 @@
 #include "timer_.h"
 #include "simon_game.h"
 #include "flash.h"
+#include "mastermind.h"
 
 #define SECOND 100000
 
@@ -315,6 +316,36 @@ void tasks_done_state()
     }
 }
 
+void games_state()
+{
+    if (intializeView)
+    {
+        games_view();
+        intializeView = false;
+    }
+
+    if (is_settings_pressed)
+    {
+        is_settings_pressed = false;
+        state = SETTINGS;
+        intializeView = true;
+    }
+
+    if (is_increase_pressed)
+    {
+        is_increase_pressed = false;
+        state = SIMON;
+        intializeView = true;
+    }
+
+    if (is_decrease_pressed)
+    {
+        is_decrease_pressed = false;
+        state = MASTERMIND;
+        intializeView = true;
+    }
+}
+
 void simon_game_state()
 {
     if (intializeView)
@@ -330,7 +361,36 @@ void simon_game_state()
         if (is_settings_pressed)
         {
             is_settings_pressed = false;
-            state = HOME;
+            state = SETTINGS;
+            intializeView = true;
+        }
+        if (is_increase_pressed)
+        {
+            is_increase_pressed = false;
+        }
+        if (is_decrease_pressed)
+        {
+            is_decrease_pressed = false;
+        }
+    }
+}
+
+void mastermind_game_state()
+{
+    if (intializeView)
+    {
+        mastermind_init_view();
+        intializeView = false;
+    }
+
+    mastermind_game_logic();
+
+    if (game_state.first_run)
+    {
+        if (is_settings_pressed)
+        {
+            is_settings_pressed = false;
+            state = SETTINGS;
             intializeView = true;
         }
         if (is_increase_pressed)

@@ -789,3 +789,14 @@ void simon_game_green()
 {
     ST7735_FillCircle(140, 65, 14, ST7735_GREEN);
 }
+
+/*########################### GAME VIEW #################################*/
+
+// Function to display the settings view
+void games_view()
+{
+    // Draw static elements
+    ST7735_FillScreen(ST7735_BLACK);
+    ST7735_DrawString(45, 40, "Simon Game", Font_7x10, ST7735_RED, ST7735_BLACK);
+    ST7735_DrawString(30, 70, "Mastermind Game", Font_7x10, ST7735_BLUE, ST7735_BLACK);
+}

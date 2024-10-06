@@ -17,8 +17,8 @@
 #define NUM_COLORS 4
 
 // Define color codes
-#define RED 0
-#define GREEN 1
+#define RED 1
+#define GREEN 0
 #define BLUE 2
 #define YELLOW 3
 
@@ -41,6 +41,7 @@ typedef struct
     bool first_run; // Add this line
 } GameState;
 
+extern GameState game_state;
 /*########################### MASTERMIND GAME FUNCTIONS #################################*/
 
 void generate_secret_sequence(void);
@@ -55,5 +56,7 @@ void display_guess(void);
 void display_feedback(int correct_color_and_position, int correct_color_wrong_position, int remaining_attempts);
 void display_victory_message(void);
 void display_failure_message(void);
+void mastermind_display_instructions(void);
+void clear_guess_display(void);
 
 #endif // MASTERMIND_H
