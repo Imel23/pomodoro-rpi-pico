@@ -1,8 +1,9 @@
 #include "mastermind.h"
+#include <stdio.h>
 
 /*########################### MASTERMIND GAME STATE #################################*/
 
-static GameState game_state;
+GameState game_state;
 
 /*########################### MASTERMIND GAME LOGIC #################################*/
 
@@ -10,7 +11,7 @@ void generate_secret_sequence(void)
 {
     // Seed the random number generator if necessary
     // srand((unsigned int)time(NULL)); // Uncomment if time function is available
-
+    srand(to_us_since_boot(get_absolute_time()));
     for (int i = 0; i < MAX_SEQUENCE_LENGTH; i++)
     {
         game_state.secret_sequence[i] = rand() % NUM_COLORS;
@@ -96,90 +97,81 @@ void reset_game(void)
 
 void mastermind_game_logic(void)
 {
-    reset_game();
-    game_state.first_run = true; // Game just started
 
-    mastermind_init_view(); // Display initial screen asking to press START
-
-    while (true)
+    if (game_state.first_run)
     {
-        if (game_state.first_run)
+        // Waiting for the player to press 'START' to display instructions
+        if (is_start_pause_pressed)
         {
-            // Waiting for the player to press 'START' to display instructions
+            is_start_pause_pressed = false;
+            game_state.first_run = false;
+            mastermind_display_instructions(); // Display instructions and prompt to press START again
+        }
+    }
+    else if (game_state.waiting_to_start)
+    {
+        // Waiting for the player to press 'START' to begin the game
+        if (is_start_pause_pressed)
+        {
+            is_start_pause_pressed = false;
+            game_state.waiting_to_start = false;
+            mastermind_game_display(); // Display game screen
+            generate_secret_sequence();
+        }
+    }
+    else if (!game_state.game_over)
+    {
+        // Game is in progress
+        if (game_state.current_guess_index < MAX_SEQUENCE_LENGTH)
+        {
+            // Process color selection buttons
+            if (is_settings_pressed)
+            {
+                is_settings_pressed = false;
+                handle_button_press(RED);
+            }
+            if (is_increase_pressed)
+            {
+                is_increase_pressed = false;
+                handle_button_press(GREEN);
+            }
+            if (is_decrease_pressed)
+            {
+                is_decrease_pressed = false;
+                handle_button_press(BLUE);
+            }
             if (is_start_pause_pressed)
             {
                 is_start_pause_pressed = false;
-                game_state.first_run = false;
-                mastermind_display_instructions(); // Display instructions and prompt to press START again
-            }
-        }
-        else if (game_state.waiting_to_start)
-        {
-            // Waiting for the player to press 'START' to begin the game
-            if (is_start_pause_pressed)
-            {
-                is_start_pause_pressed = false;
-                game_state.waiting_to_start = false;
-                mastermind_game_display(); // Display game screen
-                generate_secret_sequence();
-            }
-        }
-        else if (!game_state.game_over)
-        {
-            // Game is in progress
-            if (game_state.current_guess_index < MAX_SEQUENCE_LENGTH)
-            {
-                // Process color selection buttons
-                if (is_settings_pressed)
-                {
-                    is_settings_pressed = false;
-                    handle_button_press(RED);
-                }
-                if (is_increase_pressed)
-                {
-                    is_increase_pressed = false;
-                    handle_button_press(GREEN);
-                }
-                if (is_decrease_pressed)
-                {
-                    is_decrease_pressed = false;
-                    handle_button_press(BLUE);
-                }
-                if (is_start_pause_pressed)
-                {
-                    is_start_pause_pressed = false;
-                    handle_button_press(YELLOW);
-                }
-            }
-            else
-            {
-                // Guess is complete, wait for 'START' button to submit guess
-                if (is_start_pause_pressed)
-                {
-                    is_start_pause_pressed = false;
-                    provide_feedback();
-                    check_game_status();
-
-                    if (!game_state.game_over)
-                    {
-                        clear_guess_display(); // Clear circles after submitting the guess
-                    }
-                }
+                handle_button_press(YELLOW);
             }
         }
         else
         {
-            // Game over, wait for 'START' button to reset
+            // Guess is complete, wait for 'START' button to submit guess
             if (is_start_pause_pressed)
             {
                 is_start_pause_pressed = false;
-                reset_game();
-                game_state.first_run = true; // Reset to initial state
-                mastermind_init_view();      // Display initial screen asking to press START
+                provide_feedback();
+                check_game_status();
+
+                if (!game_state.game_over)
+                {
+                    clear_guess_display(); // Clear circles after submitting the guess
+                }
             }
         }
-
-        sleep_ms(10); // Small delay to prevent busy-waiting
+    }
+    else
+    {
+        // Game over, wait for 'START' button to reset
+        if (is_start_pause_pressed)
+        {
+            is_start_pause_pressed = false;
+            reset_game();
+            game_state.first_run = true; // Reset to initial state
+            mastermind_init_view();      // Display initial screen asking to press START
+        }
     }
 }
 
@@ -187,6 +179,9 @@ void mastermind_game_logic(void)
 
 void mastermind_init_view(void)
 {
+    reset_game();
+    game_state.first_run = true; // Game just started
+
     ST7735_FillScreen(ST7735_BLACK);
 
     // Center "Mastermind" title
