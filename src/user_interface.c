@@ -744,50 +744,55 @@ void simon_game_view()
     // Draw static elements
     ST7735_FillScreen(ST7735_BLACK);
 
-    ST7735_DrawCircle(20, 65, 15, ST7735_CYAN);
+    const char *feedback_text = "Simon Game";
+    int feedback_width = strlen(feedback_text) * 6; // Assuming Font_7x10
+    int feedback_x = (160 - feedback_width) / 2;
+    ST7735_DrawString(feedback_x, 160 - 25, feedback_text, Font_7x10, ST7735_BLACK, ST7735_CYAN);
+
+    ST7735_DrawCircle(20, 85, 15, ST7735_CYAN);
     simon_game_yellow_off();
 
-    ST7735_DrawCircle(60, 65, 15, ST7735_CYAN);
+    ST7735_DrawCircle(60, 85, 15, ST7735_CYAN);
     simon_game_blue_off();
 
-    ST7735_DrawCircle(100, 65, 15, ST7735_CYAN);
+    ST7735_DrawCircle(100, 85, 15, ST7735_CYAN);
     simon_game_red_off();
 
-    ST7735_DrawCircle(140, 65, 15, ST7735_CYAN);
+    ST7735_DrawCircle(140, 85, 15, ST7735_CYAN);
     simon_game_green_off();
 }
 
 void simon_game_yellow_off()
 {
-    ST7735_FillCircle(20, 65, 14, ST7735_YELLOW_OFF);
+    ST7735_FillCircle(20, 85, 14, ST7735_YELLOW_OFF);
 }
 void simon_game_blue_off()
 {
-    ST7735_FillCircle(60, 65, 14, ST7735_BLUE_OFF);
+    ST7735_FillCircle(60, 85, 14, ST7735_BLUE_OFF);
 }
 void simon_game_red_off()
 {
-    ST7735_FillCircle(100, 65, 14, ST7735_RED_OFF);
+    ST7735_FillCircle(100, 85, 14, ST7735_RED_OFF);
 }
 void simon_game_green_off()
 {
-    ST7735_FillCircle(140, 65, 14, ST7735_GREEN_OFF);
+    ST7735_FillCircle(140, 85, 14, ST7735_GREEN_OFF);
 }
 void simon_game_yellow()
 {
-    ST7735_FillCircle(20, 65, 14, ST7735_YELLOW);
+    ST7735_FillCircle(20, 85, 14, ST7735_YELLOW);
 }
 void simon_game_blue()
 {
-    ST7735_FillCircle(60, 65, 14, ST7735_BLUE);
+    ST7735_FillCircle(60, 85, 14, ST7735_BLUE);
 }
 void simon_game_red()
 {
-    ST7735_FillCircle(100, 65, 14, ST7735_RED);
+    ST7735_FillCircle(100, 85, 14, ST7735_RED);
 }
 void simon_game_green()
 {
-    ST7735_FillCircle(140, 65, 14, ST7735_GREEN);
+    ST7735_FillCircle(140, 85, 14, ST7735_GREEN);
 }
 
 /*########################### GAME VIEW #################################*/

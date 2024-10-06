@@ -1,11 +1,13 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include "pico/time.h"
 #include "pico/stdlib.h"
 #include "hardware/gpio.h"
 #include "buttons_handler.h"
 #include "user_interface.h"
 #include "simon_game.h"
+#include "state_machine.h"
 
 #define MAX_LEVEL 20
 
@@ -25,6 +27,7 @@ void play_wrong_sequence();
 void get_sequence();
 void play_right_sequence();
 void toggle_seq_led(uint seq, bool state);
+void display_victory(void);
 
 uint diff = 1000;
 uint level = 1;
@@ -32,6 +35,7 @@ uint seq[MAX_LEVEL], playerseq[MAX_LEVEL];
 
 state_e simon_state = IDLE_S;
 event_e event = START_BTN_NOT_PRESSED;
+bool idle_first_time = true;
 
 void simon_game()
 {
@@ -39,11 +43,22 @@ void simon_game()
     switch (simon_state)
     {
     case IDLE_S:
+        if (idle_first_time)
+        {
+            simon_game_view();
+            // Center "Press START to begin" prompt
+            const char *prompt = "Press START to begin";
+            int prompt_width = strlen(prompt) * 6; // Assuming Font_7x10 is 6 pixels wide
+            int prompt_x = (160 - prompt_width) / 2;
+            ST7735_DrawString(prompt_x - 10, 40, prompt, Font_7x10, ST7735_YELLOW, ST7735_BLACK);
+            idle_first_time = false;
+        }
         idle_sequence();
         if (START_BTN_PRESSED == check_start_btn())
         {
             simon_state = PLAYSEQ_S;
             generate_sequence();
+            ST7735_FillRectangle(5, 30, 150, 30, ST7735_BLACK); // Clear previous feedback
         }
         break;
 
@@ -53,18 +68,37 @@ void simon_game()
         break;
 
     case RIGHTSEQ_S:
-        play_right_sequence();
         if (level < MAX_LEVEL)
+        {
+            play_right_sequence();
             level++;
-        diff -= 100;
-        simon_state = PLAYSEQ_S;
+            diff -= 100;
+            simon_state = PLAYSEQ_S;
+        }
+        else
+        {
+            simon_state = WIN;
+            display_victory();
+        }
+
         break;
 
     case WRONGSEQ_S:
         play_wrong_sequence();
         level = 1;
         diff = 1000;
+        idle_first_time = true;
         simon_state = IDLE_S;
+        break;
+    case WIN:
+        level = 1;
+        diff = 1000;
+        idle_first_time = true;
+        if (START_BTN_PRESSED == check_start_btn())
+        {
+            simon_state = IDLE_S;
+        }
+
         break;
 
     default:
@@ -292,4 +326,13 @@ void get_sequence()
     }
     event = RIGHTSEQ;
     simon_state = RIGHTSEQ_S;
+}
+
+void display_victory(void)
+{
+    ST7735_FillScreen(ST7735_BLACK);
+    const char *message = "You Win!";
+    int message_width = strlen(message) * 11; // Assuming Font_11x18
+    int message_x = (160 - message_width) / 2;
+    ST7735_DrawString(message_x, 128 / 2 - 9, message, Font_11x18, ST7735_GREEN, ST7735_BLACK); // Adjusted to center vertically
 }
