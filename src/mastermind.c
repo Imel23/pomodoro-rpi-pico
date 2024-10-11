@@ -1,5 +1,6 @@
-#include "mastermind.h"
 #include <stdio.h>
+#include "mastermind.h"
+#include "state_machine.h"
 
 /*########################### MASTERMIND GAME STATE #################################*/
 
@@ -167,6 +168,7 @@ void mastermind_game_logic(void)
     }
     else
     {
+        interrupt_flag = 2;
         // Game over, wait for 'START' button to reset
         if (is_start_pause_pressed)
         {
@@ -195,13 +197,14 @@ void mastermind_init_view(void)
     ST7735_DrawString(title_x + 10, 30, title, Font_11x18, ST7735_CYAN, ST7735_BLACK);
 
     // Draw a decorative line under the title
-    ST7735_DrawLineThick(25, 55, 130, 55, ST7735_MAGENTA, 2);
+    ST7735_DrawLineThick(22, 55, 130, 55, ST7735_MAGENTA, 2);
 
     // Center "Press START to begin" prompt
     const char *prompt = "Press START to begin";
     int prompt_width = strlen(prompt) * 6; // Assuming Font_7x10 is 6 pixels wide
     int prompt_x = (WIDTH - prompt_width) / 2;
-    ST7735_DrawString(prompt_x, 80, prompt, Font_7x10, ST7735_YELLOW, ST7735_BLACK);
+    ST7735_DrawString(prompt_x + 5, 80, prompt, Font_7x10, ST7735_YELLOW, ST7735_BLACK);
+    interrupt_flag = 1;
 }
 
 void mastermind_display_instructions(void)
@@ -247,7 +250,7 @@ void mastermind_game_display(void)
     const char *feedback_text = "Mastermind";
     int feedback_width = strlen(feedback_text) * 6; // Assuming Font_7x10
     int feedback_x = (WIDTH - feedback_width) / 2;
-    ST7735_DrawString(feedback_x, HEIGHT - 25, feedback_text, Font_7x10, ST7735_BLACK, ST7735_CYAN);
+    ST7735_DrawString(feedback_x, 15, feedback_text, Font_7x10, ST7735_BLACK, ST7735_CYAN);
 
     ST7735_DrawLineThick(130, 0, 130, 128, ST7735_CYAN, 2);
 }

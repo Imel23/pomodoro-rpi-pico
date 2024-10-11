@@ -8,7 +8,7 @@
 #include "flash.h"
 #include "mastermind.h"
 
-#define SECOND 100000
+#define SECOND 1000000
 
 time_s time;
 pomodoro_e state = HOME;
@@ -160,7 +160,10 @@ void sessions_state()
         is_start_pause_pressed = false;
         state = SETTINGS;
         update_sessions(&time);
+        printf("before flash write\n");
         flash_write(&time);
+        printf("after flash write\n");
+
         intializeView = true;
     }
 
@@ -364,6 +367,7 @@ void simon_game_state()
             is_settings_pressed = false;
             state = SETTINGS;
             intializeView = true;
+            interrupt_flag = 0;
         }
         if (is_increase_pressed)
         {
@@ -393,6 +397,7 @@ void mastermind_game_state()
             is_settings_pressed = false;
             state = SETTINGS;
             intializeView = true;
+            interrupt_flag = 0;
         }
         if (is_increase_pressed)
         {

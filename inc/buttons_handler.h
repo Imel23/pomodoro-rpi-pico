@@ -4,9 +4,9 @@
 #include "pico/stdlib.h"
 
 #define START_PAUSE_BUTTON 0
-#define INCREA_BUTTON 3
-#define DECREA_BUTTON 6
-#define SETT_BUTTON 9
+#define INCREA_BUTTON 1
+#define DECREA_BUTTON 2
+#define SETT_BUTTON 3
 
 #define debounce_delay 300
 

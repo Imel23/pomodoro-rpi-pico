@@ -14,11 +14,11 @@
 #define SPI_PORT spi0
 
 // #define LCD_MISO 4
-#define LCD_CS 17
-#define LCD_SCK 18
-#define LCD_MOSI 19
-#define LCD_RST 22
-#define LCD_DC 16
+#define LCD_CS 5   // 17
+#define LCD_SCK 6  // 18
+#define LCD_MOSI 7 // 19
+#define LCD_RST 4  // 22
+#define LCD_DC 8   // 16
 
 #define ST7735_SPI_PORT spi0 // spi0, spi1
 // #define USE_SPI_DMA			//if used DMA for SPI bus
@@ -138,6 +138,7 @@
 #define ST7735_YELLOW 0xFFE0
 #define ST7735_YELLOW_OFF 0x7BE0
 #define ST7735_WHITE 0xFFFF
+#define ST7735_ORANGE 0xFDA0
 
 void ST7735_Backlight_On(void);
 void ST7735_Backlight_Off(void);

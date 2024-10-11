@@ -52,6 +52,7 @@ void simon_game()
             int prompt_x = (160 - prompt_width) / 2;
             ST7735_DrawString(prompt_x - 10, 40, prompt, Font_7x10, ST7735_YELLOW, ST7735_BLACK);
             idle_first_time = false;
+            interrupt_flag = 1;
         }
         idle_sequence();
         if (START_BTN_PRESSED == check_start_btn())
@@ -84,6 +85,7 @@ void simon_game()
         break;
 
     case WRONGSEQ_S:
+        interrupt_flag = 2;
         play_wrong_sequence();
         level = 1;
         diff = 1000;
