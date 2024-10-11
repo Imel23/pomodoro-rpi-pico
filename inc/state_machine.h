@@ -30,9 +30,9 @@ typedef enum
     MASTERMIND
 } pomodoro_e;
 
-#define rot 3
-
 extern pomodoro_e state;
+
+extern volatile uint8_t interrupt_flag;
 
 void __init();
 

@@ -1,16 +1,36 @@
 #include <stdio.h>
 #include "pico/stdlib.h"
+#include "pico/multicore.h"
 #include "state_machine.h"
 #include "user_interface.h"
 #include "simon_game.h"
+#include "buzzer.h"
 
-#define rot 3
+#define rot 1
+
+volatile uint8_t interrupt_flag = 0;
+
+// Core 1 function to handle an event (e.g., button press)
+void core1_entry()
+{
+    while (true)
+    {
+        if (interrupt_flag)
+        {
+            tone();
+        }
+        // Core 1 can also check for other interrupts/events here
+        sleep_ms(10); // Small sleep to yield CPU time
+    }
+}
 
 void __init();
 
 int main()
 {
     __init();
+
+    multicore_launch_core1(core1_entry);
 
     ST7735_SetRotation(rot);
 

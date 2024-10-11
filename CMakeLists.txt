@@ -10,6 +10,8 @@ set(PICO_TOOLCHAIN_PATH "${PICO_TOOLCHAIN_PATH}" CACHE INTERNAL "")
 #2. include the pico sdk here
 include(pico_sdk_import.cmake)
 
+#set(CMAKE_BUILD_TYPE Debug)
+
 #3. Specify the project name
 project(Pomodoro)
 
@@ -25,6 +27,7 @@ add_executable(Pomodoro
     src/simon_game.c
     src/flash.c
     src/mastermind.c
+    src/buzzer.c
 )
 
 pico_enable_stdio_usb(Pomodoro 1)
@@ -34,7 +37,7 @@ pico_enable_stdio_uart(Pomodoro 0)
 pico_add_extra_outputs(Pomodoro)
 
 #7. add target libraries
-target_link_libraries(Pomodoro displayLib hardware_irq)
+target_link_libraries(Pomodoro displayLib hardware_irq hardware_pwm pico_multicore)
 target_include_directories(Pomodoro PUBLIC inc/)
 
 add_subdirectory(lib)

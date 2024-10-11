@@ -73,6 +73,7 @@ bool update_time(time_s *time, uint32_t *percentage, bool *work_ptr)
     }
     else if (((time->currentSecond == 0) && (time->currentMinute == 0)))
     {
+        interrupt_flag = 0;
         if (time->currentSession >= time->sessions)
         {
             work = true;
@@ -122,6 +123,8 @@ bool update_time(time_s *time, uint32_t *percentage, bool *work_ptr)
     }
     else
     {
+        if (((time->currentSecond == 10) && (time->currentMinute == 0)))
+            interrupt_flag = 3;
         time->currentSecond--;
     }
     // Update the time display if changed
@@ -260,10 +263,10 @@ void sessions_view(time_s *time)
     // Draw static elements
     ST7735_FillScreen(ST7735_BLACK);
     ST7735_DrawString(50, 16, "Tasks", Font_11x18, ST7735_CYAN, ST7735_BLACK);
-    ST7735_DrawLineThick(50, 35, 110, 35, ST7735_MAGENTA, 2);
+    ST7735_DrawLineThick(50, 35, 105, 35, ST7735_MAGENTA, 2);
     ST7735_DrawString(130, 110, "[+]", Font_7x10, ST7735_WHITE, ST7735_BLACK);
     ST7735_DrawString(10, 110, "[-]", Font_7x10, ST7735_WHITE, ST7735_BLACK);
-    ST7735_DrawString(60, 60, sessionNumber, Font_11x18, ST7735_WHITE, ST7735_BLACK);
+    ST7735_DrawString(65, 60, sessionNumber, Font_11x18, ST7735_WHITE, ST7735_BLACK);
 
     session = time->sessions;
 }
@@ -279,8 +282,8 @@ void sessions_up()
     char sessionNumber[2];
     sprintf(sessionNumber, "%02d", session);
 
-    ST7735_FillRectangle(60, 60, 48, 10, ST7735_BLACK);
-    ST7735_DrawString(60, 60, sessionNumber, Font_11x18, ST7735_WHITE, ST7735_BLACK);
+    ST7735_FillRectangle(65, 60, 48, 10, ST7735_BLACK);
+    ST7735_DrawString(65, 60, sessionNumber, Font_11x18, ST7735_WHITE, ST7735_BLACK);
 }
 
 void sessions_down()
@@ -294,8 +297,8 @@ void sessions_down()
     char sessionNumber[2];
     sprintf(sessionNumber, "%02d", session);
 
-    ST7735_FillRectangle(60, 60, 48, 10, ST7735_BLACK);
-    ST7735_DrawString(60, 60, sessionNumber, Font_11x18, ST7735_WHITE, ST7735_BLACK);
+    ST7735_FillRectangle(65, 60, 48, 10, ST7735_BLACK);
+    ST7735_DrawString(65, 60, sessionNumber, Font_11x18, ST7735_WHITE, ST7735_BLACK);
 }
 
 void update_sessions(time_s *time)
@@ -323,7 +326,7 @@ void work_duration_view(time_s *time)
     ST7735_DrawLineThick(10, 35, 150, 35, ST7735_MAGENTA, 2);
     ST7735_DrawString(130, 110, "[+]", Font_7x10, ST7735_WHITE, ST7735_BLACK);
     ST7735_DrawString(10, 110, "[-]", Font_7x10, ST7735_WHITE, ST7735_BLACK);
-    ST7735_DrawString(40, 60, work_duration_str, Font_11x18, ST7735_WHITE, ST7735_BLACK);
+    ST7735_DrawString(45, 60, work_duration_str, Font_11x18, ST7735_WHITE, ST7735_BLACK);
 
     work_duration = time->workDuration;
 }
@@ -339,8 +342,8 @@ void work_duration_up()
     char work_duration_str[6];
     sprintf(work_duration_str, "%02d min", work_duration);
 
-    ST7735_FillRectangle(40, 60, 48, 10, ST7735_BLACK);
-    ST7735_DrawString(40, 60, work_duration_str, Font_11x18, ST7735_WHITE, ST7735_BLACK);
+    ST7735_FillRectangle(45, 60, 48, 10, ST7735_BLACK);
+    ST7735_DrawString(45, 60, work_duration_str, Font_11x18, ST7735_WHITE, ST7735_BLACK);
 }
 
 void work_duration_down()
@@ -354,8 +357,8 @@ void work_duration_down()
     char work_duration_str[6];
     sprintf(work_duration_str, "%02d min", work_duration);
 
-    ST7735_FillRectangle(40, 60, 48, 10, ST7735_BLACK);
-    ST7735_DrawString(40, 60, work_duration_str, Font_11x18, ST7735_WHITE, ST7735_BLACK);
+    ST7735_FillRectangle(45, 60, 48, 10, ST7735_BLACK);
+    ST7735_DrawString(45, 60, work_duration_str, Font_11x18, ST7735_WHITE, ST7735_BLACK);
 }
 
 void update_work_duration(time_s *time)
@@ -380,10 +383,10 @@ void short_break_view(time_s *time)
     // Draw static elements
     ST7735_FillScreen(ST7735_BLACK);
     ST7735_DrawString(15, 16, "Short break", Font_11x18, ST7735_CYAN, ST7735_BLACK);
-    ST7735_DrawLineThick(15, 35, 140, 35, ST7735_MAGENTA, 2);
+    ST7735_DrawLineThick(15, 35, 135, 35, ST7735_MAGENTA, 2);
     ST7735_DrawString(130, 110, "[+]", Font_7x10, ST7735_WHITE, ST7735_BLACK);
     ST7735_DrawString(10, 110, "[-]", Font_7x10, ST7735_WHITE, ST7735_BLACK);
-    ST7735_DrawString(40, 60, short_break_str, Font_11x18, ST7735_WHITE, ST7735_BLACK);
+    ST7735_DrawString(45, 60, short_break_str, Font_11x18, ST7735_WHITE, ST7735_BLACK);
 
     short_break = time->shortBreak;
 }
@@ -399,8 +402,8 @@ void short_break_up()
     char short_break_str[6];
     sprintf(short_break_str, "%02d min", short_break);
 
-    ST7735_FillRectangle(40, 60, 48, 10, ST7735_BLACK);
-    ST7735_DrawString(40, 60, short_break_str, Font_11x18, ST7735_WHITE, ST7735_BLACK);
+    ST7735_FillRectangle(45, 60, 48, 10, ST7735_BLACK);
+    ST7735_DrawString(45, 60, short_break_str, Font_11x18, ST7735_WHITE, ST7735_BLACK);
 }
 
 void short_break_down()
@@ -413,8 +416,8 @@ void short_break_down()
     char short_break_str[6];
     sprintf(short_break_str, "%02d min", short_break);
 
-    ST7735_FillRectangle(40, 60, 48, 10, ST7735_BLACK);
-    ST7735_DrawString(40, 60, short_break_str, Font_11x18, ST7735_WHITE, ST7735_BLACK);
+    ST7735_FillRectangle(45, 60, 48, 10, ST7735_BLACK);
+    ST7735_DrawString(45, 60, short_break_str, Font_11x18, ST7735_WHITE, ST7735_BLACK);
 }
 
 void short_break_duration(time_s *time)
@@ -439,10 +442,10 @@ void long_break_view(time_s *time)
     // Draw static elements
     ST7735_FillScreen(ST7735_BLACK);
     ST7735_DrawString(20, 16, "long break", Font_11x18, ST7735_CYAN, ST7735_BLACK);
-    ST7735_DrawLineThick(20, 35, 130, 35, ST7735_MAGENTA, 2);
+    ST7735_DrawLineThick(22, 35, 130, 35, ST7735_MAGENTA, 2);
     ST7735_DrawString(130, 110, "[+]", Font_7x10, ST7735_WHITE, ST7735_BLACK);
     ST7735_DrawString(10, 110, "[-]", Font_7x10, ST7735_WHITE, ST7735_BLACK);
-    ST7735_DrawString(40, 60, long_break_str, Font_11x18, ST7735_WHITE, ST7735_BLACK);
+    ST7735_DrawString(45, 60, long_break_str, Font_11x18, ST7735_WHITE, ST7735_BLACK);
 
     long_break = time->longBreak;
 }
@@ -458,8 +461,8 @@ void long_break_up()
     char long_break_str[6];
     sprintf(long_break_str, "%02d min", long_break);
 
-    ST7735_FillRectangle(40, 60, 48, 10, ST7735_BLACK);
-    ST7735_DrawString(40, 60, long_break_str, Font_11x18, ST7735_WHITE, ST7735_BLACK);
+    ST7735_FillRectangle(45, 60, 48, 10, ST7735_BLACK);
+    ST7735_DrawString(45, 60, long_break_str, Font_11x18, ST7735_WHITE, ST7735_BLACK);
 }
 
 void long_break_down()
@@ -472,8 +475,8 @@ void long_break_down()
     char long_break_str[6];
     sprintf(long_break_str, "%02d min", long_break);
 
-    ST7735_FillRectangle(40, 60, 48, 10, ST7735_BLACK);
-    ST7735_DrawString(40, 60, long_break_str, Font_11x18, ST7735_WHITE, ST7735_BLACK);
+    ST7735_FillRectangle(45, 60, 48, 10, ST7735_BLACK);
+    ST7735_DrawString(45, 60, long_break_str, Font_11x18, ST7735_WHITE, ST7735_BLACK);
 }
 
 void long_break_duration(time_s *time)
@@ -747,7 +750,7 @@ void simon_game_view()
     const char *feedback_text = "Simon Game";
     int feedback_width = strlen(feedback_text) * 6; // Assuming Font_7x10
     int feedback_x = (160 - feedback_width) / 2;
-    ST7735_DrawString(feedback_x, 160 - 25, feedback_text, Font_7x10, ST7735_BLACK, ST7735_CYAN);
+    ST7735_DrawString(feedback_x, 15, feedback_text, Font_7x10, ST7735_BLACK, ST7735_CYAN);
 
     ST7735_DrawCircle(20, 85, 15, ST7735_CYAN);
     simon_game_yellow_off();
@@ -802,6 +805,9 @@ void games_view()
 {
     // Draw static elements
     ST7735_FillScreen(ST7735_BLACK);
-    ST7735_DrawString(45, 40, "Simon Game", Font_7x10, ST7735_RED, ST7735_BLACK);
-    ST7735_DrawString(30, 70, "Mastermind Game", Font_7x10, ST7735_BLUE, ST7735_BLACK);
+    ST7735_FillRectangle(0, 0, 159, 64, ST7735_RED);
+    ST7735_FillRectangle(0, 65, 159, 63, ST7735_BLUE);
+
+    ST7735_DrawString(45, 32, "Simon Game", Font_7x10, ST7735_BLACK, ST7735_RED);
+    ST7735_DrawString(30, 97, "Mastermind Game", Font_7x10, ST7735_BLACK, ST7735_BLUE);
 }
